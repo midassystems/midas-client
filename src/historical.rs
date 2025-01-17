@@ -1,32 +1,12 @@
 use crate::response::ApiResponse;
-use crate::{error::Error, error::Result, utils::date_to_unix_nanos};
+use crate::{error::Error, error::Result};
 use futures_util::StreamExt;
-use mbn::symbols::Instrument;
+use mbn::params::RetrieveParams;
+use reqwest::StatusCode;
 use reqwest::{self, Client, ClientBuilder};
-use reqwest::{Response, StatusCode};
-use serde::{Deserialize, Serialize};
 use std::fs::File;
 use std::io::Write;
 use std::time::Duration;
-
-#[derive(Debug, Serialize, Deserialize)]
-pub struct RetrieveParams {
-    pub symbols: Vec<String>,
-    pub start_ts: i64,
-    pub end_ts: i64,
-    pub schema: String,
-}
-
-impl RetrieveParams {
-    pub fn new(symbols: Vec<String>, start: &str, end: &str, schema: &str) -> Result<Self> {
-        Ok(RetrieveParams {
-            symbols,
-            start_ts: date_to_unix_nanos(start)?,
-            end_ts: date_to_unix_nanos(end)?,
-            schema: schema.to_string(),
-        })
-    }
-}
 
 #[derive(Clone)]
 pub struct Historical {
@@ -56,106 +36,9 @@ impl Historical {
         )
     }
 
-    // Instruments
-    pub async fn create_symbol(&self, instrument: &Instrument) -> Result<ApiResponse<u32>> {
-        let url = self.url("instruments/create");
-
-        // Send the POST request
-        let response: Response = self.client.post(&url).json(instrument).send().await?;
-
-        // Check for HTTP status
-        if response.status() != StatusCode::OK {
-            // Deserialize the API response and return it, even if it indicates failure
-            return ApiResponse::<u32>::from_response(response).await;
-        }
-
-        let api_response = ApiResponse::<u32>::from_response(response).await?;
-        Ok(api_response)
-    }
-
-    pub async fn get_symbol(&self, ticker: &String) -> Result<ApiResponse<u32>> {
-        let url = self.url("instruments/get");
-
-        // Send GET request
-        let response = self.client.get(&url).json(ticker).send().await?;
-
-        // Check for HTTP status
-        if response.status() != StatusCode::OK {
-            // Deserialize the API response and return it, even if it indicates failure
-            return ApiResponse::<u32>::from_response(response).await;
-        }
-
-        let api_response = ApiResponse::<u32>::from_response(response).await?;
-        Ok(api_response)
-    }
-
-    /// Returns data = ""
-    pub async fn delete_symbol(&self, id: &i32) -> Result<ApiResponse<String>> {
-        let url = self.url("instruments/delete");
-        let response = self.client.delete(&url).json(id).send().await?;
-
-        // Check for HTTP status
-        if response.status() != StatusCode::OK {
-            // Deserialize the API response and return it, even if it indicates failure
-            return ApiResponse::<String>::from_response(response).await;
-        }
-
-        let api_response = ApiResponse::<String>::from_response(response).await?;
-        Ok(api_response)
-    }
-
-    pub async fn list_symbols(&self) -> Result<ApiResponse<Vec<Instrument>>> {
-        let url = self.url("instruments/list");
-        let response = self.client.get(&url).send().await?;
-
-        // Check for HTTP status
-        if response.status() != StatusCode::OK {
-            // Deserialize the API response and return it, even if it indicates failure
-            return ApiResponse::<Vec<Instrument>>::from_response(response).await;
-        }
-
-        let api_response = ApiResponse::<Vec<Instrument>>::from_response(response).await?;
-        Ok(api_response)
-    }
-
-    pub async fn list_vendor_symbols(
-        &self,
-        vendor: &String,
-    ) -> Result<ApiResponse<Vec<Instrument>>> {
-        let url = self.url("instruments/vendor_list");
-        let response = self.client.get(&url).json(vendor).send().await?;
-
-        // Check for HTTP status
-        if response.status() != StatusCode::OK {
-            // Deserialize the API response and return it, even if it indicates failure
-            return ApiResponse::<Vec<Instrument>>::from_response(response).await;
-        }
-
-        let api_response = ApiResponse::<Vec<Instrument>>::from_response(response).await?;
-        Ok(api_response)
-    }
-
-    pub async fn update_symbol(
-        &self,
-        instrument: &Instrument,
-        id: &i32,
-    ) -> Result<ApiResponse<String>> {
-        let url = self.url("instruments/update");
-        let response = self.client.put(&url).json(&(instrument, id)).send().await?;
-
-        // Check for HTTP status
-        if response.status() != StatusCode::OK {
-            // Deserialize the API response and return it, even if it indicates failure
-            return ApiResponse::<String>::from_response(response).await;
-        }
-
-        let api_response = ApiResponse::<String>::from_response(response).await?;
-        Ok(api_response)
-    }
-
     // Market data
     pub async fn create_mbp(&self, data: &[u8]) -> Result<ApiResponse<String>> {
-        let url = self.url("mbp/create");
+        let url = self.url("mbp/create/stream");
         let response = self.client.post(&url).json(data).send().await?;
 
         // Check for HTTP status
@@ -201,7 +84,7 @@ impl Historical {
     }
 
     pub async fn create_mbp_from_file(&self, file_path: &str) -> Result<ApiResponse<String>> {
-        let url = self.url("mbp/bulk_upload");
+        let url = self.url("mbp/create/bulk");
         let response = self
             .client
             .post(&url)
@@ -225,8 +108,6 @@ impl Historical {
                     let bytes_str = String::from_utf8_lossy(&bytes);
                     match serde_json::from_str::<ApiResponse<String>>(&bytes_str) {
                         Ok(response) => {
-                            println!("{:?}", response.message);
-
                             if response.status != "success" {
                                 return Ok(response);
                             }
@@ -250,7 +131,7 @@ impl Historical {
     }
 
     pub async fn get_records(&self, params: &RetrieveParams) -> Result<ApiResponse<Vec<u8>>> {
-        let url = self.url("mbp/get");
+        let url = self.url("mbp/get/stream");
         let response = self.client.get(&url).json(params).send().await?;
 
         // Check for HTTP status
@@ -301,57 +182,58 @@ impl Historical {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::instrument::Instruments;
     use dotenv::dotenv;
     use mbn::decode::Decoder;
-    use mbn::encode::RecordEncoder;
-    use mbn::enums::{Action, Schema};
+    use mbn::encode::CombinedEncoder;
+    use mbn::enums::Vendors;
+    use mbn::enums::{Action, Dataset, Schema};
+    use mbn::metadata::Metadata;
     use mbn::record_ref::RecordRef;
     use mbn::records::{BidAskPair, Mbp1Msg, RecordHeader};
-    use mbn::symbols::Instrument;
-    use mbn::symbols::Vendors;
-    use regex::Regex;
+    use mbn::symbols::{Instrument, SymbolMap};
     use serial_test::serial;
     use std::io::Cursor;
 
-    fn get_id_from_string(message: &str) -> Option<i32> {
-        let re = Regex::new(r"\d+$").unwrap();
+    async fn create_dummy_instrument(ticker: &str, dataset: Dataset) -> Result<i32> {
+        dotenv().ok();
+        let base_url = std::env::var("INSTRUMENT_URL").expect("Expected database_url.");
+        let client = Instruments::new(&base_url);
 
-        if let Some(captures) = re.captures(message) {
-            if let Some(matched) = captures.get(0) {
-                let number: i32 = matched.as_str().parse().unwrap();
-                return Some(number);
-            }
-        }
-        None
-    }
-
-    async fn create_dummy_instrument(client: &Historical) -> Result<i32> {
         // Create instrument
         let instrument = Instrument::new(
             None,
-            "AAPL9",
+            ticker,
             "Apple tester client",
             Vendors::Databento,
-            Some("continuous".to_string()),
-            Some("GLBX.MDP3".to_string()),
+            dataset,
             1,
             1,
             true,
         );
 
         let create_response = client.create_symbol(&instrument).await?;
-        let id =
-            get_id_from_string(&create_response.message).expect("Error getting id from message.");
+        let id = create_response.data as i32;
+
         Ok(id)
     }
 
+    async fn delete_dummy_instrument(id: &i32) -> Result<()> {
+        dotenv().ok();
+        let base_url = std::env::var("INSTRUMENT_URL").expect("Expected database_url.");
+        let client = Instruments::new(&base_url);
+        let _ = client.delete_symbol(&id).await?;
+
+        Ok(())
+    }
+
     #[allow(dead_code)]
-    async fn create_dummy_records() -> Result<i32> {
+    async fn create_dummy_records(ticker: &str, dataset: Dataset) -> Result<i32> {
         dotenv().ok();
         let base_url = std::env::var("HISTORICAL_URL").expect("Expected database_url.");
         let client = Historical::new(&base_url);
 
-        let id = create_dummy_instrument(&client).await?;
+        let id = create_dummy_instrument(ticker, dataset).await?;
 
         // Pull test data
         let mbp_1 = Mbp1Msg {
@@ -399,8 +281,17 @@ mod tests {
         let record_ref1: RecordRef = (&mbp_1).into();
         let record_ref2: RecordRef = (&mbp_2).into();
 
+        let metadata = Metadata::new(
+            Schema::Mbp1,
+            Dataset::Equities,
+            1704209103644092564,
+            1704209103644092566,
+            SymbolMap::new(),
+        );
+
         let mut buffer = Vec::new();
-        let mut encoder = RecordEncoder::new(&mut buffer);
+        let mut encoder = CombinedEncoder::new(&mut buffer);
+        encoder.encode_metadata(&metadata)?;
         encoder
             .encode_records(&[record_ref1, record_ref2])
             .expect("Encoding failed");
@@ -413,199 +304,15 @@ mod tests {
     #[tokio::test]
     #[serial]
     // #[ignore]
-    async fn test_instrument_create() -> Result<()> {
-        dotenv().ok();
-        let base_url = std::env::var("HISTORICAL_URL").expect("Expected database_url.");
-        let client = Historical::new(&base_url);
-
-        let instrument = Instrument::new(
-            None,
-            "AAP00001",
-            "Apple tester client",
-            Vendors::Databento,
-            Some("continuous".to_string()),
-            Some("GLBX.MDP3".to_string()),
-            1,
-            1,
-            true,
-        );
-
-        // Test
-        let response = client.create_symbol(&instrument).await?;
-        let id = get_id_from_string(&response.message).expect("Error getting id from message.");
-
-        // Validate
-        assert_eq!(response.code, 200);
-        assert_eq!(response.status, "success");
-
-        // Cleanup
-        let _ = client.delete_symbol(&id).await?;
-
-        Ok(())
-    }
-
-    #[tokio::test]
-    #[serial]
-    // #[ignore]
-    async fn test_instrument_create_error() -> Result<()> {
-        dotenv().ok();
-        let base_url = std::env::var("HISTORICAL_URL").expect("Expected database_url.");
-        let client = Historical::new(&base_url);
-        let id = create_dummy_instrument(&client).await?;
-
-        // Test
-        let instrument = Instrument::new(
-            None,
-            "AAPL9",
-            "Apple tester client",
-            Vendors::Databento,
-            Some("continuous".to_string()),
-            Some("GLBX.MDP3".to_string()),
-            1,
-            1,
-            true,
-        );
-
-        let response = client.create_symbol(&instrument).await?;
-
-        // Validate
-        assert_eq!(response.code, 500);
-        assert_eq!(response.status, "failed");
-
-        // Cleanup
-        let _ = client.delete_symbol(&id).await?;
-
-        Ok(())
-    }
-
-    #[tokio::test]
-    #[serial]
-    // #[ignore]
-    async fn test_get_instrument() -> Result<()> {
-        dotenv().ok();
-        let base_url = std::env::var("HISTORICAL_URL").expect("Expected database_url.");
-        let client = Historical::new(&base_url);
-        let id = create_dummy_instrument(&client).await?;
-
-        // Test
-        let response = client.get_symbol(&"AAPL9".to_string()).await?;
-
-        // Validate
-        assert_eq!(response.code, 200);
-        assert_eq!(response.status, "success");
-        assert!(response.data > 0);
-
-        // Cleanup
-        let _ = client.delete_symbol(&id).await?;
-
-        Ok(())
-    }
-
-    #[tokio::test]
-    #[serial]
-    // #[ignore]
-    async fn test_get_instrument_none() -> Result<()> {
-        dotenv().ok();
-        let base_url = std::env::var("HISTORICAL_URL").expect("Expected database_url.");
-        let client = Historical::new(&base_url);
-
-        // Test
-        let response = client.get_symbol(&"AAPL".to_string()).await?;
-
-        // Validate
-        assert_eq!(response.code, 404); // Request was valid but that ticker doesnt exist
-        assert_eq!(response.status, "success");
-
-        Ok(())
-    }
-
-    #[tokio::test]
-    #[serial]
-    // #[ignore]
-    async fn test_list_instruments() -> Result<()> {
-        dotenv().ok();
-        let base_url = std::env::var("HISTORICAL_URL").expect("Expected database_url.");
-        let client = Historical::new(&base_url);
-        let id = create_dummy_instrument(&client).await?;
-
-        // Test
-        let vendor = "databento".to_string();
-        let response = client.list_vendor_symbols(&vendor).await?;
-
-        // Validate
-        assert_eq!(response.code, 200);
-        assert_eq!(response.status, "success");
-
-        // Cleanup
-        let _ = client.delete_symbol(&id).await?;
-
-        Ok(())
-    }
-
-    #[tokio::test]
-    #[serial]
-    // #[ignore]
-    async fn test_list_vendor_instruments() -> Result<()> {
-        dotenv().ok();
-        let base_url = std::env::var("HISTORICAL_URL").expect("Expected database_url.");
-        let client = Historical::new(&base_url);
-        let id = create_dummy_instrument(&client).await?;
-
-        // Test
-        let response = client.list_symbols().await?;
-
-        // Validate
-        assert_eq!(response.code, 200);
-        assert_eq!(response.status, "success");
-
-        // Cleanup
-        let _ = client.delete_symbol(&id).await?;
-
-        Ok(())
-    }
-
-    #[tokio::test]
-    #[serial]
-    // #[ignore]
-    async fn test_update_instrument() -> Result<()> {
-        dotenv().ok();
-        let base_url = std::env::var("HISTORICAL_URL").expect("Expected database_url.");
-        let client = Historical::new(&base_url);
-        let id = create_dummy_instrument(&client).await?;
-
-        // Test
-        let instrument = Instrument::new(
-            None,
-            "TTT0005",
-            "New name",
-            Vendors::Databento,
-            Some("continuous".to_string()),
-            Some("GLBX.MDP3".to_string()),
-            1,
-            2,
-            true,
-        );
-
-        let response = client.update_symbol(&instrument, &id).await?;
-
-        // Validate
-        assert_eq!(response.code, 200);
-        assert_eq!(response.status, "success");
-
-        // Cleanup
-        let _ = client.delete_symbol(&id).await?;
-
-        Ok(())
-    }
-
-    #[tokio::test]
-    #[serial]
-    // #[ignore]
     async fn test_create_mbp() -> Result<()> {
         dotenv().ok();
         let base_url = std::env::var("HISTORICAL_URL").expect("Expected database_url.");
         let client = Historical::new(&base_url);
-        let id = create_dummy_instrument(&client).await?;
+
+        let ticker = "HEj4";
+        let dataset = Dataset::Equities;
+
+        let id = create_dummy_instrument(ticker, dataset).await?;
 
         // Pull test data
         let mbp_1 = Mbp1Msg {
@@ -653,8 +360,17 @@ mod tests {
         let record_ref1: RecordRef = (&mbp_1).into();
         let record_ref2: RecordRef = (&mbp_2).into();
 
+        let metadata = Metadata::new(
+            Schema::Mbp1,
+            Dataset::Equities,
+            1704209103644092564,
+            1704209103644092566,
+            SymbolMap::new(),
+        );
+
         let mut buffer = Vec::new();
-        let mut encoder = RecordEncoder::new(&mut buffer);
+        let mut encoder = CombinedEncoder::new(&mut buffer);
+        encoder.encode_metadata(&metadata)?;
         encoder
             .encode_records(&[record_ref1, record_ref2])
             .expect("Encoding failed");
@@ -667,7 +383,7 @@ mod tests {
         assert_eq!(response.status, "success");
 
         // Cleanup
-        let _ = client.delete_symbol(&id).await?;
+        let _ = delete_dummy_instrument(&id).await?;
 
         Ok(())
     }
@@ -679,7 +395,11 @@ mod tests {
         dotenv().ok();
         let base_url = std::env::var("HISTORICAL_URL").expect("Expected database_url.");
         let client = Historical::new(&base_url);
-        let id = create_dummy_instrument(&client).await?;
+
+        let ticker = "HEj4";
+        let dataset = Dataset::Equities;
+
+        let id = create_dummy_instrument(ticker, dataset).await?;
 
         // Pull test data
         let mbp_1 = Mbp1Msg {
@@ -727,8 +447,17 @@ mod tests {
         let record_ref1: RecordRef = (&mbp_1).into();
         let record_ref2: RecordRef = (&mbp_2).into();
 
+        let metadata = Metadata::new(
+            Schema::Mbp1,
+            Dataset::Equities,
+            1704209103644092564,
+            1704209103644092566,
+            SymbolMap::new(),
+        );
+
         let mut buffer = Vec::new();
-        let mut encoder = RecordEncoder::new(&mut buffer);
+        let mut encoder = CombinedEncoder::new(&mut buffer);
+        encoder.encode_metadata(&metadata)?;
         encoder
             .encode_records(&[record_ref1, record_ref2])
             .expect("Encoding failed");
@@ -742,7 +471,7 @@ mod tests {
         assert_eq!(response.status, "failed");
 
         // Cleanup
-        let _ = client.delete_symbol(&id).await?;
+        let _ = delete_dummy_instrument(&id).await?;
 
         Ok(())
     }
@@ -754,14 +483,19 @@ mod tests {
         dotenv().ok();
         let base_url = std::env::var("HISTORICAL_URL").expect("Expected database_url.");
         let client = Historical::new(&base_url);
-        let id = create_dummy_records().await?;
+
+        let ticker = "HEj4";
+        let dataset = Dataset::Equities;
+
+        let id = create_dummy_instrument(ticker, dataset.clone()).await?;
 
         // Test
         let query_params = RetrieveParams {
             symbols: vec!["AAPL9".to_string()],
             start_ts: 1704209103644092563,
             end_ts: 1704239109644092565,
-            schema: Schema::Mbp1.to_string(),
+            schema: Schema::Mbp1,
+            dataset,
         };
 
         let response = client.get_records(&query_params).await?;
@@ -776,7 +510,7 @@ mod tests {
         assert_eq!(response.status, "success");
 
         // Cleanup
-        let _ = client.delete_symbol(&id).await?;
+        let _ = delete_dummy_instrument(&id).await?;
 
         Ok(())
     }
@@ -788,14 +522,19 @@ mod tests {
         dotenv().ok();
         let base_url = std::env::var("HISTORICAL_URL").expect("Expected database_url.");
         let client = Historical::new(&base_url);
-        let id = create_dummy_records().await?;
+
+        let ticker = "HEj4";
+        let dataset = Dataset::Equities;
+
+        let id = create_dummy_instrument(ticker, dataset.clone()).await?;
 
         // Test
         let query_params = RetrieveParams {
             symbols: vec!["AAPL9".to_string()],
             start_ts: 1704209103644092563,
             end_ts: 1704239109644092565,
-            schema: Schema::Mbp1.to_string(),
+            schema: Schema::Mbp1,
+            dataset,
         };
 
         let response = client
@@ -806,7 +545,7 @@ mod tests {
         assert_eq!(response, ());
 
         // Cleanup
-        let _ = client.delete_symbol(&id).await?;
+        let _ = delete_dummy_instrument(&id).await?;
 
         Ok(())
     }
@@ -818,14 +557,19 @@ mod tests {
         dotenv().ok();
         let base_url = std::env::var("HISTORICAL_URL").expect("Expected database_url.");
         let client = Historical::new(&base_url);
-        let id = create_dummy_records().await?;
+
+        let ticker = "HEj4";
+        let dataset = Dataset::Equities;
+
+        let id = create_dummy_instrument(ticker, dataset.clone()).await?;
 
         // Test
         let query_params = RetrieveParams {
             symbols: vec!["AAPL9".to_string()],
             start_ts: 1704209103644092563,
             end_ts: 1704209203654092563,
-            schema: Schema::Ohlcv1S.to_string(),
+            schema: Schema::Ohlcv1S, //to_string(),
+            dataset,
         };
 
         let response = client.get_records(&query_params).await?;
@@ -840,7 +584,7 @@ mod tests {
         assert_eq!(response.status, "success");
 
         // Cleanup
-        let _ = client.delete_symbol(&id).await?;
+        let _ = delete_dummy_instrument(&id).await?;
 
         Ok(())
     }
@@ -852,14 +596,19 @@ mod tests {
         dotenv().ok();
         let base_url = std::env::var("HISTORICAL_URL").expect("Expected database_url.");
         let client = Historical::new(&base_url);
-        let id = create_dummy_records().await?;
+
+        let ticker = "HEj4";
+        let dataset = Dataset::Equities;
+
+        let id = create_dummy_instrument(ticker, dataset.clone()).await?;
 
         // Test
         let query_params = RetrieveParams {
             symbols: vec!["AAPL9".to_string()],
             start_ts: 1704209103644092563,
             end_ts: 1704209203654092563,
-            schema: Schema::Trade.to_string(),
+            schema: Schema::Trade,
+            dataset,
         };
 
         let response = client.get_records(&query_params).await?;
@@ -874,7 +623,7 @@ mod tests {
         assert_eq!(response.status, "success");
 
         // Cleanup
-        let _ = client.delete_symbol(&id).await?;
+        let _ = delete_dummy_instrument(&id).await?;
 
         Ok(())
     }
@@ -885,14 +634,19 @@ mod tests {
         dotenv().ok();
         let base_url = std::env::var("HISTORICAL_URL").expect("Expected database_url.");
         let client = Historical::new(&base_url);
-        let id = create_dummy_records().await?;
+
+        let ticker = "HEj4";
+        let dataset = Dataset::Equities;
+
+        let id = create_dummy_instrument(ticker, dataset.clone()).await?;
 
         // Test
         let query_params = RetrieveParams {
             symbols: vec!["AAPL9".to_string()],
             start_ts: 1704209103644092563,
             end_ts: 1704209203654092563,
-            schema: Schema::Tbbo.to_string(),
+            schema: Schema::Tbbo,
+            dataset,
         };
 
         let response = client.get_records(&query_params).await?;
@@ -907,7 +661,7 @@ mod tests {
         assert_eq!(response.status, "success");
 
         // Cleanup
-        let _ = client.delete_symbol(&id).await?;
+        let _ = delete_dummy_instrument(&id).await?;
 
         Ok(())
     }
@@ -918,14 +672,19 @@ mod tests {
         dotenv().ok();
         let base_url = std::env::var("HISTORICAL_URL").expect("Expected database_url.");
         let client = Historical::new(&base_url);
-        let id = create_dummy_records().await?;
+
+        let ticker = "HEj4";
+        let dataset = Dataset::Equities;
+
+        let id = create_dummy_instrument(ticker, dataset.clone()).await?;
 
         // Test
         let query_params = RetrieveParams {
             symbols: vec!["AAPL9".to_string()],
             start_ts: 1704209103644092563,
             end_ts: 1704209203654092563,
-            schema: Schema::Bbo1S.to_string(),
+            schema: Schema::Bbo1S,
+            dataset,
         };
 
         let response = client.get_records(&query_params).await?;
@@ -940,7 +699,7 @@ mod tests {
         assert_eq!(response.status, "success");
 
         // Cleanup
-        let _ = client.delete_symbol(&id).await?;
+        let _ = delete_dummy_instrument(&id).await?;
 
         Ok(())
     }
@@ -960,7 +719,8 @@ mod tests {
             vec!["HE.n.0".to_string(), "ZC.n.0".to_string()],
             "2024-01-01 00:00:00",
             "2024-01-03 23:00:00",
-            "bbo-1m",
+            Schema::Bbo1M,
+            Dataset::Equities,
         )?;
 
         let _response = client.get_records_to_file(&query_params, "bbo.bin").await?;
