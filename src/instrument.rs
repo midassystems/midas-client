@@ -1,7 +1,8 @@
 use crate::error::Result;
 use crate::response::ApiResponse;
-use mbn::enums::{Dataset, Vendors};
+use mbn::enums::Dataset;
 use mbn::symbols::Instrument;
+use mbn::vendors::Vendors;
 use reqwest::{self, Client, ClientBuilder};
 use reqwest::{Response, StatusCode};
 use std::time::Duration;
@@ -150,22 +151,34 @@ impl Instruments {
 }
 #[cfg(test)]
 mod tests {
+    use std::str::FromStr;
+
     use super::*;
-    use crate::error::Result;
     use dotenv::dotenv;
     use mbn::enums::Dataset;
-    use mbn::enums::Vendors;
     use mbn::symbols::Instrument;
+    use mbn::vendors::Vendors;
+    use mbn::vendors::{DatabentoData, VendorData};
     use serial_test::serial;
 
-    async fn create_dummy_instrument(client: &Instruments) -> Result<i32> {
+    async fn create_dummy_instrument(client: &Instruments) -> anyhow::Result<i32> {
+        let schema = dbn::Schema::from_str("mbp-1")?;
+        let dbn_dataset = dbn::Dataset::from_str("GLBX.MDP3")?;
+        let stype = dbn::SType::from_str("raw_symbol")?;
+        let vendor_data = VendorData::Databento(DatabentoData {
+            schema,
+            dataset: dbn_dataset,
+            stype,
+        });
+
         // Create instrument
         let instrument = Instrument::new(
             None,
             "AAPL9",
             "Apple tester client",
-            Vendors::Databento,
             Dataset::Equities,
+            Vendors::Databento,
+            vendor_data.encode(),
             1,
             1,
             true,
@@ -180,17 +193,27 @@ mod tests {
     #[tokio::test]
     #[serial]
     // #[ignore]
-    async fn test_instrument_create() -> Result<()> {
+    async fn test_instrument_create() -> anyhow::Result<()> {
         dotenv().ok();
         let base_url = std::env::var("INSTRUMENT_URL").expect("Expected database_url.");
         let client = Instruments::new(&base_url);
+
+        let schema = dbn::Schema::from_str("mbp-1")?;
+        let dbn_dataset = dbn::Dataset::from_str("GLBX.MDP3")?;
+        let stype = dbn::SType::from_str("raw_symbol")?;
+        let vendor_data = VendorData::Databento(DatabentoData {
+            schema,
+            dataset: dbn_dataset,
+            stype,
+        });
 
         let instrument = Instrument::new(
             None,
             "AAP00001",
             "Apple tester client",
-            Vendors::Databento,
             Dataset::Equities,
+            Vendors::Databento,
+            vendor_data.encode(),
             1,
             1,
             true,
@@ -213,19 +236,29 @@ mod tests {
     #[tokio::test]
     #[serial]
     // #[ignore]
-    async fn test_instrument_create_error() -> Result<()> {
+    async fn test_instrument_create_error() -> anyhow::Result<()> {
         dotenv().ok();
         let base_url = std::env::var("INSTRUMENT_URL").expect("Expected database_url.");
         let client = Instruments::new(&base_url);
         let id = create_dummy_instrument(&client).await?;
 
         // Test
+        let schema = dbn::Schema::from_str("mbp-1")?;
+        let dbn_dataset = dbn::Dataset::from_str("GLBX.MDP3")?;
+        let stype = dbn::SType::from_str("raw_symbol")?;
+        let vendor_data = VendorData::Databento(DatabentoData {
+            schema,
+            dataset: dbn_dataset,
+            stype,
+        });
+
         let instrument = Instrument::new(
             None,
             "AAPL9",
             "Apple tester client",
-            Vendors::Databento,
             Dataset::Equities,
+            Vendors::Databento,
+            vendor_data.encode(),
             1,
             1,
             true,
@@ -246,7 +279,7 @@ mod tests {
     #[tokio::test]
     #[serial]
     // #[ignore]
-    async fn test_get_instrument() -> Result<()> {
+    async fn test_get_instrument() -> anyhow::Result<()> {
         dotenv().ok();
         let base_url = std::env::var("INSTRUMENT_URL").expect("Expected database_url.");
         let client = Instruments::new(&base_url);
@@ -271,7 +304,7 @@ mod tests {
     #[tokio::test]
     #[serial]
     // #[ignore]
-    async fn test_get_instrument_none() -> Result<()> {
+    async fn test_get_instrument_none() -> anyhow::Result<()> {
         dotenv().ok();
         let base_url = std::env::var("INSTRUMENT_URL").expect("Expected database_url.");
         let client = Instruments::new(&base_url);
@@ -291,19 +324,29 @@ mod tests {
     #[tokio::test]
     #[serial]
     // #[ignore]
-    async fn test_update_instrument() -> Result<()> {
+    async fn test_update_instrument() -> anyhow::Result<()> {
         dotenv().ok();
         let base_url = std::env::var("INSTRUMENT_URL").expect("Expected database_url.");
         let client = Instruments::new(&base_url);
         let id = create_dummy_instrument(&client).await?;
 
         // Test
+        let schema = dbn::Schema::from_str("mbp-1")?;
+        let dbn_dataset = dbn::Dataset::from_str("GLBX.MDP3")?;
+        let stype = dbn::SType::from_str("raw_symbol")?;
+        let vendor_data = VendorData::Databento(DatabentoData {
+            schema,
+            dataset: dbn_dataset,
+            stype,
+        });
+
         let instrument = Instrument::new(
             Some(id as u32),
             "TTT0005",
             "New name",
-            Vendors::Databento,
             Dataset::Equities,
+            Vendors::Databento,
+            vendor_data.encode(),
             1,
             2,
             true,
@@ -324,7 +367,7 @@ mod tests {
     #[tokio::test]
     #[serial]
     // #[ignore]
-    async fn test_list_dataset_instruments() -> Result<()> {
+    async fn test_list_dataset_instruments() -> anyhow::Result<()> {
         dotenv().ok();
         let base_url = std::env::var("INSTRUMENT_URL").expect("Expected database_url.");
         let client = Instruments::new(&base_url);
@@ -347,7 +390,7 @@ mod tests {
     #[tokio::test]
     #[serial]
     // #[ignore]
-    async fn test_list_vendor_instruments() -> Result<()> {
+    async fn test_list_vendor_instruments() -> anyhow::Result<()> {
         dotenv().ok();
         let base_url = std::env::var("INSTRUMENT_URL").expect("Expected database_url.");
         let client = Instruments::new(&base_url);

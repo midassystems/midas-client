@@ -1141,7 +1141,7 @@ checksum = "0e7465ac9959cc2b1404e8e2367b43684a6d13790fe23056cc8c6c5a6b7bcb94"
 [[package]]
 name = "mbn"
 version = "1.0.4"
-source = "git+https://github.com/midassystems/mbn.git?branch=main#eac807a6cf2ff371804aa22319fdb992ec39cbdf"
+source = "git+https://github.com/midassystems/mbn.git?branch=vendor_data#c8f32a991e8a58db84569afe98ae7225107866bb"
 dependencies = [
  "bigdecimal",
  "bytemuck",
@@ -1184,6 +1184,8 @@ dependencies = [
  "async-trait",
  "axum",
  "chrono",
+ "databento",
+ "dbn",
  "derive_more",
  "dotenv",
  "futures-util",

@@ -183,30 +183,43 @@ impl Historical {
 mod tests {
     use super::*;
     use crate::instrument::Instruments;
+    use dbn;
     use dotenv::dotenv;
     use mbn::decode::Decoder;
     use mbn::encode::CombinedEncoder;
-    use mbn::enums::Vendors;
     use mbn::enums::{Action, Dataset, Schema};
     use mbn::metadata::Metadata;
     use mbn::record_ref::RecordRef;
     use mbn::records::{BidAskPair, Mbp1Msg, RecordHeader};
     use mbn::symbols::{Instrument, SymbolMap};
+    use mbn::vendors::Vendors;
+    use mbn::vendors::{DatabentoData, VendorData};
     use serial_test::serial;
     use std::io::Cursor;
+    use std::str::FromStr;
 
-    async fn create_dummy_instrument(ticker: &str, dataset: Dataset) -> Result<i32> {
+    async fn create_dummy_instrument(ticker: &str, dataset: Dataset) -> anyhow::Result<i32> {
         dotenv().ok();
         let base_url = std::env::var("INSTRUMENT_URL").expect("Expected database_url.");
         let client = Instruments::new(&base_url);
+
+        let schema = dbn::Schema::from_str("mbp-1")?;
+        let dbn_dataset = dbn::Dataset::from_str("GLBX.MDP3")?;
+        let stype = dbn::SType::from_str("raw_symbol")?;
+        let vendor_data = VendorData::Databento(DatabentoData {
+            schema,
+            dataset: dbn_dataset,
+            stype,
+        });
 
         // Create instrument
         let instrument = Instrument::new(
             None,
             ticker,
             "Apple tester client",
-            Vendors::Databento,
             dataset,
+            Vendors::Databento,
+            vendor_data.encode(),
             1,
             1,
             true,
@@ -228,7 +241,7 @@ mod tests {
     }
 
     #[allow(dead_code)]
-    async fn create_dummy_records(ticker: &str, dataset: Dataset) -> Result<i32> {
+    async fn create_dummy_records(ticker: &str, dataset: Dataset) -> anyhow::Result<i32> {
         dotenv().ok();
         let base_url = std::env::var("HISTORICAL_URL").expect("Expected database_url.");
         let client = Historical::new(&base_url);
@@ -304,7 +317,7 @@ mod tests {
     #[tokio::test]
     #[serial]
     // #[ignore]
-    async fn test_create_mbp() -> Result<()> {
+    async fn test_create_mbp() -> anyhow::Result<()> {
         dotenv().ok();
         let base_url = std::env::var("HISTORICAL_URL").expect("Expected database_url.");
         let client = Historical::new(&base_url);
@@ -391,7 +404,7 @@ mod tests {
     #[tokio::test]
     #[serial]
     // #[ignore]
-    async fn test_create_mbp_duplicate_error() -> Result<()> {
+    async fn test_create_mbp_duplicate_error() -> anyhow::Result<()> {
         dotenv().ok();
         let base_url = std::env::var("HISTORICAL_URL").expect("Expected database_url.");
         let client = Historical::new(&base_url);
@@ -479,7 +492,7 @@ mod tests {
     #[tokio::test]
     #[serial]
     // #[ignore]
-    async fn test_get_mbp() -> Result<()> {
+    async fn test_get_mbp() -> anyhow::Result<()> {
         dotenv().ok();
         let base_url = std::env::var("HISTORICAL_URL").expect("Expected database_url.");
         let client = Historical::new(&base_url);
@@ -518,7 +531,7 @@ mod tests {
     #[tokio::test]
     #[serial]
     // #[ignore]
-    async fn test_get_records_to_file() -> Result<()> {
+    async fn test_get_records_to_file() -> anyhow::Result<()> {
         dotenv().ok();
         let base_url = std::env::var("HISTORICAL_URL").expect("Expected database_url.");
         let client = Historical::new(&base_url);
@@ -553,7 +566,7 @@ mod tests {
     #[tokio::test]
     #[serial]
     // #[ignore]
-    async fn test_get_ohlcv() -> Result<()> {
+    async fn test_get_ohlcv() -> anyhow::Result<()> {
         dotenv().ok();
         let base_url = std::env::var("HISTORICAL_URL").expect("Expected database_url.");
         let client = Historical::new(&base_url);
@@ -592,7 +605,7 @@ mod tests {
     #[tokio::test]
     #[serial]
     // #[ignore]
-    async fn test_get_trades() -> Result<()> {
+    async fn test_get_trades() -> anyhow::Result<()> {
         dotenv().ok();
         let base_url = std::env::var("HISTORICAL_URL").expect("Expected database_url.");
         let client = Historical::new(&base_url);
@@ -630,7 +643,7 @@ mod tests {
     #[tokio::test]
     #[serial]
     // #[ignore]
-    async fn test_get_tbbo() -> Result<()> {
+    async fn test_get_tbbo() -> anyhow::Result<()> {
         dotenv().ok();
         let base_url = std::env::var("HISTORICAL_URL").expect("Expected database_url.");
         let client = Historical::new(&base_url);
@@ -668,7 +681,7 @@ mod tests {
     #[tokio::test]
     #[serial]
     // #[ignore]
-    async fn test_get_bbo() -> Result<()> {
+    async fn test_get_bbo() -> anyhow::Result<()> {
         dotenv().ok();
         let base_url = std::env::var("HISTORICAL_URL").expect("Expected database_url.");
         let client = Historical::new(&base_url);
