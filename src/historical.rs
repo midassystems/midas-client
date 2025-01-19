@@ -108,6 +108,7 @@ impl Historical {
                     let bytes_str = String::from_utf8_lossy(&bytes);
                     match serde_json::from_str::<ApiResponse<String>>(&bytes_str) {
                         Ok(response) => {
+                            println!("{:?}", response.message);
                             if response.status != "success" {
                                 return Ok(response);
                             }

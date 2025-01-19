@@ -17,8 +17,7 @@ futures-util = "0.3"
 axum = "0.6"
 async-trait = "0.1.83"
 mockito = "1.6.1"
-mbn = { git = "https://github.com/midassystems/mbn.git", branch = "vendor_data" }
-# mbn = {path = "../../mbn/mbn/"}
+mbn = { git = "https://github.com/midassystems/mbn.git", branch = "main" }
 
 [dev-dependencies]
 serial_test = "3.1.1"
