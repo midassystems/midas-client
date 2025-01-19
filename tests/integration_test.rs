@@ -1,15 +1,18 @@
 use dotenv::dotenv;
 use mbn::encode::CombinedEncoder;
+use mbn::enums::Dataset;
 use mbn::enums::{Action, Schema};
-use mbn::enums::{Dataset, Vendors};
 use mbn::metadata::Metadata;
 use mbn::record_ref::RecordRef;
 use mbn::records::{BidAskPair, Mbp1Msg, RecordHeader};
 use mbn::symbols::{Instrument, SymbolMap};
+use mbn::vendors::Vendors;
+use mbn::vendors::{DatabentoData, VendorData};
 use midas_client::historical::Historical;
 use midas_client::instrument::Instruments;
 use serial_test::serial;
 use std::path::PathBuf;
+use std::str::FromStr;
 // use mbn::params::RetrieveParams;
 
 async fn create_dummy_instrument(ticker: &str, dataset: Dataset) -> anyhow::Result<i32> {
@@ -18,12 +21,22 @@ async fn create_dummy_instrument(ticker: &str, dataset: Dataset) -> anyhow::Resu
     let client = Instruments::new(&base_url);
 
     // Create instrument
+    let schema = dbn::Schema::from_str("mbp-1")?;
+    let dbn_dataset = dbn::Dataset::from_str("GLBX.MDP3")?;
+    let stype = dbn::SType::from_str("raw_symbol")?;
+    let vendor_data = VendorData::Databento(DatabentoData {
+        schema,
+        dataset: dbn_dataset,
+        stype,
+    });
+
     let instrument = Instrument::new(
         None,
         ticker,
         "Apple tester client",
-        Vendors::Databento,
         dataset,
+        Vendors::Databento,
+        vendor_data.encode(),
         1,
         1,
         true,
