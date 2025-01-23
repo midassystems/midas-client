@@ -1140,8 +1140,8 @@ checksum = "0e7465ac9959cc2b1404e8e2367b43684a6d13790fe23056cc8c6c5a6b7bcb94"
 
 [[package]]
 name = "mbn"
-version = "1.0.5"
-source = "git+https://github.com/midassystems/mbn.git?branch=dev#312dac50f2d01233a6faeb7b89d9946f3d948d4a"
+version = "1.0.6"
+source = "git+https://github.com/midassystems/mbn.git?branch=main#e97a2baa2f1f34c146be96508ee82188a5430938"
 dependencies = [
  "bigdecimal",
  "bytemuck",

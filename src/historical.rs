@@ -625,7 +625,7 @@ mod tests {
             symbols: vec!["AAPL".to_string()],
             start_ts: 1704209103644092563,
             end_ts: 1704209203654092563,
-            schema: Schema::Trade,
+            schema: Schema::Trades,
             dataset,
             stype: mbn::enums::Stype::Raw,
         };
