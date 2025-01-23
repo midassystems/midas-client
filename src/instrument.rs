@@ -174,11 +174,12 @@ mod tests {
         // Create instrument
         let instrument = Instrument::new(
             None,
-            "AAPL9",
+            "AAPL",
             "Apple tester client",
             Dataset::Equities,
             Vendors::Databento,
             vendor_data.encode(),
+            1,
             1,
             1,
             true,
@@ -214,6 +215,7 @@ mod tests {
             Dataset::Equities,
             Vendors::Databento,
             vendor_data.encode(),
+            1,
             1,
             1,
             true,
@@ -254,11 +256,12 @@ mod tests {
 
         let instrument = Instrument::new(
             None,
-            "AAPL9",
+            "AAPL",
             "Apple tester client",
             Dataset::Equities,
             Vendors::Databento,
             vendor_data.encode(),
+            1,
             1,
             1,
             true,
@@ -287,8 +290,10 @@ mod tests {
 
         // Test
         let response = client
-            .get_symbol(&"AAPL9".to_string(), &Dataset::Equities)
+            .get_symbol(&"AAPL".to_string(), &Dataset::Equities)
             .await?;
+
+        println!("{:?}", response);
 
         // Validate
         assert_eq!(response.code, 200);
@@ -311,7 +316,7 @@ mod tests {
 
         // Test
         let response = client
-            .get_symbol(&("AAPL".to_string()), &Dataset::Equities)
+            .get_symbol(&("AAPL9".to_string()), &Dataset::Equities)
             .await?;
 
         // Validate
@@ -349,6 +354,7 @@ mod tests {
             vendor_data.encode(),
             1,
             2,
+            1,
             true,
         );
 

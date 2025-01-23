@@ -223,6 +223,7 @@ mod tests {
             vendor_data.encode(),
             1,
             1,
+            1,
             true,
         );
 
@@ -251,7 +252,7 @@ mod tests {
 
         // Pull test data
         let mbp_1 = Mbp1Msg {
-            hd: { RecordHeader::new::<Mbp1Msg>(id as u32, 1704209103644092564) },
+            hd: { RecordHeader::new::<Mbp1Msg>(id as u32, 1704209103644092564, 0) },
             price: 6770,
             size: 1,
             action: Action::Trade as i8,
@@ -272,7 +273,7 @@ mod tests {
             }],
         };
         let mbp_2 = Mbp1Msg {
-            hd: { RecordHeader::new::<Mbp1Msg>(id as u32, 1704209103644092565) },
+            hd: { RecordHeader::new::<Mbp1Msg>(id as u32, 1704209103644092565, 0) },
             price: 6870,
             size: 2,
             action: Action::Trade as i8,
@@ -323,14 +324,14 @@ mod tests {
         let base_url = std::env::var("HISTORICAL_URL").expect("Expected database_url.");
         let client = Historical::new(&base_url);
 
-        let ticker = "HEj4";
+        let ticker = "AAPL";
         let dataset = Dataset::Equities;
 
         let id = create_dummy_instrument(ticker, dataset).await?;
 
         // Pull test data
         let mbp_1 = Mbp1Msg {
-            hd: { RecordHeader::new::<Mbp1Msg>(id as u32, 1704209103644092564) },
+            hd: { RecordHeader::new::<Mbp1Msg>(id as u32, 1704209103644092564, 0) },
             price: 6770,
             size: 1,
             action: 1,
@@ -351,7 +352,7 @@ mod tests {
             }],
         };
         let mbp_2 = Mbp1Msg {
-            hd: { RecordHeader::new::<Mbp1Msg>(id as u32, 1704239109644092565) },
+            hd: { RecordHeader::new::<Mbp1Msg>(id as u32, 1704239109644092565, 0) },
             price: 6870,
             size: 2,
             action: 1,
@@ -410,14 +411,14 @@ mod tests {
         let base_url = std::env::var("HISTORICAL_URL").expect("Expected database_url.");
         let client = Historical::new(&base_url);
 
-        let ticker = "HEj4";
+        let ticker = "AAPL";
         let dataset = Dataset::Equities;
 
         let id = create_dummy_instrument(ticker, dataset).await?;
 
         // Pull test data
         let mbp_1 = Mbp1Msg {
-            hd: { RecordHeader::new::<Mbp1Msg>(id as u32, 1704209103644092564) },
+            hd: { RecordHeader::new::<Mbp1Msg>(id as u32, 1704209103644092564, 0) },
             price: 6770,
             size: 1,
             action: 1,
@@ -438,7 +439,7 @@ mod tests {
             }],
         };
         let mbp_2 = Mbp1Msg {
-            hd: { RecordHeader::new::<Mbp1Msg>(id as u32, 1704209103644092564) },
+            hd: { RecordHeader::new::<Mbp1Msg>(id as u32, 1704209103644092564, 0) },
             price: 6770,
             size: 1,
             action: 1,
@@ -498,18 +499,19 @@ mod tests {
         let base_url = std::env::var("HISTORICAL_URL").expect("Expected database_url.");
         let client = Historical::new(&base_url);
 
-        let ticker = "HEj4";
+        let ticker = "AAPL";
         let dataset = Dataset::Equities;
 
         let id = create_dummy_instrument(ticker, dataset.clone()).await?;
 
         // Test
         let query_params = RetrieveParams {
-            symbols: vec!["AAPL9".to_string()],
+            symbols: vec!["AAPL".to_string()],
             start_ts: 1704209103644092563,
             end_ts: 1704239109644092565,
             schema: Schema::Mbp1,
             dataset,
+            stype: mbn::enums::Stype::Raw,
         };
 
         let response = client.get_records(&query_params).await?;
@@ -537,18 +539,19 @@ mod tests {
         let base_url = std::env::var("HISTORICAL_URL").expect("Expected database_url.");
         let client = Historical::new(&base_url);
 
-        let ticker = "HEj4";
+        let ticker = "AAPL";
         let dataset = Dataset::Equities;
 
         let id = create_dummy_instrument(ticker, dataset.clone()).await?;
 
         // Test
         let query_params = RetrieveParams {
-            symbols: vec!["AAPL9".to_string()],
+            symbols: vec!["AAPL".to_string()],
             start_ts: 1704209103644092563,
             end_ts: 1704239109644092565,
             schema: Schema::Mbp1,
             dataset,
+            stype: mbn::enums::Stype::Raw,
         };
 
         let response = client
@@ -572,18 +575,19 @@ mod tests {
         let base_url = std::env::var("HISTORICAL_URL").expect("Expected database_url.");
         let client = Historical::new(&base_url);
 
-        let ticker = "HEj4";
+        let ticker = "AAPL";
         let dataset = Dataset::Equities;
 
         let id = create_dummy_instrument(ticker, dataset.clone()).await?;
 
         // Test
         let query_params = RetrieveParams {
-            symbols: vec!["AAPL9".to_string()],
+            symbols: vec!["AAPL".to_string()],
             start_ts: 1704209103644092563,
             end_ts: 1704209203654092563,
             schema: Schema::Ohlcv1S, //to_string(),
             dataset,
+            stype: mbn::enums::Stype::Raw,
         };
 
         let response = client.get_records(&query_params).await?;
@@ -611,18 +615,19 @@ mod tests {
         let base_url = std::env::var("HISTORICAL_URL").expect("Expected database_url.");
         let client = Historical::new(&base_url);
 
-        let ticker = "HEj4";
+        let ticker = "AAPL";
         let dataset = Dataset::Equities;
 
         let id = create_dummy_instrument(ticker, dataset.clone()).await?;
 
         // Test
         let query_params = RetrieveParams {
-            symbols: vec!["AAPL9".to_string()],
+            symbols: vec!["AAPL".to_string()],
             start_ts: 1704209103644092563,
             end_ts: 1704209203654092563,
-            schema: Schema::Trade,
+            schema: Schema::Trades,
             dataset,
+            stype: mbn::enums::Stype::Raw,
         };
 
         let response = client.get_records(&query_params).await?;
@@ -649,18 +654,19 @@ mod tests {
         let base_url = std::env::var("HISTORICAL_URL").expect("Expected database_url.");
         let client = Historical::new(&base_url);
 
-        let ticker = "HEj4";
+        let ticker = "AAPL";
         let dataset = Dataset::Equities;
 
         let id = create_dummy_instrument(ticker, dataset.clone()).await?;
 
         // Test
         let query_params = RetrieveParams {
-            symbols: vec!["AAPL9".to_string()],
+            symbols: vec!["AAPL".to_string()],
             start_ts: 1704209103644092563,
             end_ts: 1704209203654092563,
             schema: Schema::Tbbo,
             dataset,
+            stype: mbn::enums::Stype::Raw,
         };
 
         let response = client.get_records(&query_params).await?;
@@ -687,18 +693,19 @@ mod tests {
         let base_url = std::env::var("HISTORICAL_URL").expect("Expected database_url.");
         let client = Historical::new(&base_url);
 
-        let ticker = "HEj4";
+        let ticker = "AAPL";
         let dataset = Dataset::Equities;
 
         let id = create_dummy_instrument(ticker, dataset.clone()).await?;
 
         // Test
         let query_params = RetrieveParams {
-            symbols: vec!["AAPL9".to_string()],
+            symbols: vec!["AAPL".to_string()],
             start_ts: 1704209103644092563,
             end_ts: 1704209203654092563,
             schema: Schema::Bbo1S,
             dataset,
+            stype: mbn::enums::Stype::Raw,
         };
 
         let response = client.get_records(&query_params).await?;
@@ -735,6 +742,7 @@ mod tests {
             "2024-01-03 23:00:00",
             Schema::Bbo1M,
             Dataset::Equities,
+            mbn::enums::Stype::Continuous,
         )?;
 
         let _response = client.get_records_to_file(&query_params, "bbo.bin").await?;

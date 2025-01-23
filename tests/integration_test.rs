@@ -39,6 +39,7 @@ async fn create_dummy_instrument(ticker: &str, dataset: Dataset) -> anyhow::Resu
         vendor_data.encode(),
         1,
         1,
+        1,
         true,
     );
 
@@ -67,7 +68,7 @@ async fn create_dummy_records_file(
 
     // Pull test data
     let mbp_1 = Mbp1Msg {
-        hd: { RecordHeader::new::<Mbp1Msg>(id as u32, 1704209103644092564) },
+        hd: { RecordHeader::new::<Mbp1Msg>(id as u32, 1704209103644092564, 0) },
         price: 6770,
         size: 1,
         action: Action::Trade as i8,
@@ -88,7 +89,7 @@ async fn create_dummy_records_file(
         }],
     };
     let mbp_2 = Mbp1Msg {
-        hd: { RecordHeader::new::<Mbp1Msg>(id as u32, 1704209103644092565) },
+        hd: { RecordHeader::new::<Mbp1Msg>(id as u32, 1704209103644092565, 0) },
         price: 6870,
         size: 2,
         action: Action::Trade as i8,
@@ -143,7 +144,7 @@ async fn test_create_mbp_from_file() -> anyhow::Result<()> {
 
     let filename = "midas_client_test_mbp-1.bin";
     let path = PathBuf::from("../midas-server/data/processed_data").join(filename);
-    let ticker = "HEj4";
+    let ticker = "AAPL";
     let dataset = Dataset::Equities;
     let id = create_dummy_records_file(ticker, dataset, &path).await?;
 
@@ -171,14 +172,14 @@ async fn test_create_mbp_from_file_duplicate_error() -> anyhow::Result<()> {
     let filename = "midas_client_test_mbp-1.bin";
     let path = PathBuf::from("../midas-server/data/processed_data").join(filename);
 
-    let ticker = "HEj4";
+    let ticker = "AAPL";
     let dataset = Dataset::Equities;
 
     let id = create_dummy_instrument(ticker, dataset).await?;
 
     // Pull test data
     let mbp_1 = Mbp1Msg {
-        hd: { RecordHeader::new::<Mbp1Msg>(id as u32, 1704209103644092564) },
+        hd: { RecordHeader::new::<Mbp1Msg>(id as u32, 1704209103644092564, 0) },
         price: 6770,
         size: 1,
         action: Action::Trade as i8,
