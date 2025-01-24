@@ -4,22 +4,18 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-tokio = {version ="1.38.1", features = ["full"]}
-reqwest = {version ="0.12.5", features = ["json"]}
-serde = {version="1.0.204"}
+reqwest = {version ="0.12.5", features = ["json", "stream"]}
+serde = {version="1.0.204", features = ["derive"]}
 serde_json = "1.0"
-anyhow ="1.0.86"
 thiserror ={version = "1.0.63"}
-derive_more = {version = "1.0.0-beta", features = ["from"]}
-dotenv = "0.15"
-chrono = "0.4"
 futures-util = "0.3"  
-axum = "0.6"
-async-trait = "0.1.83"
-mockito = "1.6.1"
+chrono = { version = "0.4", features = ["serde"] }
 mbn = { git = "https://github.com/midassystems/mbn.git", branch = "main" }
 
 [dev-dependencies]
+dotenv = "0.15"
+tokio = { version = "1.0", features = ["macros", "rt-multi-thread", "time"] }
+anyhow ="1.0.86"
 serial_test = "3.1.1"
 regex = "1.3.9"
 dbn = "0.22.1"
