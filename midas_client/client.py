@@ -11,5 +11,4 @@ class DatabaseClient:
         self.historical = HistoricalClient()
         self.trading = TradingClient()
         self.instrument = InstrumentClient()
-
         # self.api_key = api_key

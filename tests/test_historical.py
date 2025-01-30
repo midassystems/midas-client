@@ -3,7 +3,7 @@ import mbn
 import json
 import unittest
 import requests
-from mbn import BufferStore
+from mbn import BufferStore, Action, Side
 from dotenv import load_dotenv
 from midas_client import DatabaseClient
 from midas_client.historical import RetrieveParams
@@ -70,8 +70,8 @@ def json_to_mbp1msg(data):
             rollover_flag=data["rollover_flag"],
             price=data["price"],
             size=data["size"],
-            action=mbn.Action.from_str(data["action"]),
-            side=mbn.Side.from_str(data["side"]),
+            action=Action.from_str(data["action"]),
+            side=Side.from_str(data["side"]),
             depth=data["depth"],
             flags=data["flags"],
             ts_recv=data["ts_recv"],
@@ -108,7 +108,7 @@ def create_records(id: int, client: DatabaseClient) -> None:
     msgs = []
     for i in range(0, len(data)):
         msg = json_to_mbp1msg(data[i])
-        msg.instrument_id = int(id)
+        msg.instrument_id = id
         msgs.append(msg)
 
     encoder = mbn.PyRecordEncoder()

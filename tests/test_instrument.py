@@ -1,5 +1,6 @@
 import os
 import unittest
+from mbn import Dataset, Vendors
 import requests
 from dotenv import load_dotenv
 from midas_client import DatabaseClient
@@ -53,7 +54,7 @@ class TestClientMethods(unittest.TestCase):
         # Test
         response = self.client.instrument.get_instrument(
             ticker,
-            "Equities",
+            Dataset.EQUITIES,
         )
 
         # Validate
@@ -69,7 +70,9 @@ class TestClientMethods(unittest.TestCase):
         id = create_instruments(ticker, name)
 
         # Test
-        response = self.client.instrument.list_dataset_instruments("Equities")
+        response = self.client.instrument.list_dataset_instruments(
+            Dataset.EQUITIES
+        )
 
         # Validate
         self.assertEqual(response["code"], 200)
@@ -85,8 +88,7 @@ class TestClientMethods(unittest.TestCase):
 
         # Test
         response = self.client.instrument.list_vendor_instruments(
-            "Databento",
-            "Equities",
+            Vendors.DATABENTO, Dataset.EQUITIES
         )
 
         # Validate

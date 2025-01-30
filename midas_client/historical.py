@@ -42,9 +42,8 @@ class HistoricalClient:
     def get_records(self, params: RetrieveParams):
         url = f"{self.api_url}/mbp/get/stream"
 
-        # data = params.to_dict()
         # Deserialize JSON string into a Python dictionary
-        payload_dict = json.loads(params.to_json())  # json_payload)
+        payload_dict = json.loads(params.to_json())
         response = requests.get(url, json=payload_dict, stream=True)
 
         if response.status_code != 200:
@@ -53,8 +52,6 @@ class HistoricalClient:
             )
 
         bin_data = bytearray()
-
-        # Read the streamed content in chunks
 
         # Read the streamed content in chunks
         for chunk in response.iter_content(chunk_size=None):

@@ -12,7 +12,7 @@ class InstrumentClient:
 
     def get_instrument(self, ticker: str, dataset: Dataset):
         url = f"{self.api_url}/get"
-        payload = (ticker, dataset)
+        payload = (ticker, dataset.to_json())
         response = requests.get(url, json=payload)
 
         if response.status_code != 200:
@@ -23,7 +23,7 @@ class InstrumentClient:
 
     def list_dataset_instruments(self, dataset: Dataset):
         url = f"{self.api_url}/list_dataset"
-        response = requests.get(url, json=dataset)
+        response = requests.get(url, json=dataset.to_json())
 
         if response.status_code != 200:
             raise ValueError(
@@ -33,7 +33,7 @@ class InstrumentClient:
 
     def list_vendor_instruments(self, vendor: Vendors, dataset: Dataset):
         url = f"{self.api_url}/list_vendor"
-        payload = (vendor, dataset)
+        payload = (vendor.to_json(), dataset.to_json())
         response = requests.get(url, json=payload)
 
         if response.status_code != 200:
