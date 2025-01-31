@@ -32,7 +32,7 @@ dependencies = [
     "jaraco.functools==4.1.0",
     "keyring==25.6.0",
     "markdown-it-py==3.0.0",
-    "mbn==1.0.13",
+    "mbn==1.0.15",
     "mdurl==0.1.2",
     "more-itertools==10.5.0",
     "nh3==0.2.20",
