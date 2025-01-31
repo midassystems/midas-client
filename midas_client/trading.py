@@ -48,7 +48,7 @@ class TradingClient:
         encoder = PyBacktestEncoder()
         buffer = encoder.encode_backtest(data)
 
-        response = requests.post(url, json=buffer, stream=True)
+        response = requests.post(url, json=list(buffer), stream=True)
 
         if response.status_code != 200:
             raise ValueError(f"Error while creating records : {response.text}")
