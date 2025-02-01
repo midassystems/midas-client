@@ -26,9 +26,11 @@ jobs:
           pip install build twine
 
       - name: Build the package
+        working-directory: python  
         run: python -m build
 
       - name: Publish to PyPI
+        working-directory: python  
         env:
           TWINE_USERNAME: __token__
           TWINE_PASSWORD: ${{ secrets.PYPI_TOKEN }}
