@@ -143,7 +143,7 @@ async fn test_create_mbp_from_file() -> anyhow::Result<()> {
     let client = Historical::new(&base_url);
 
     let filename = "midas_client_test_mbp-1.bin";
-    let path = PathBuf::from("../midas-server/data/processed_data").join(filename);
+    let path = PathBuf::from("../../midas-server/data/processed_data").join(filename);
     let ticker = "AAPL";
     let dataset = Dataset::Equities;
     let id = create_dummy_records_file(ticker, dataset, &path).await?;
@@ -170,7 +170,7 @@ async fn test_create_mbp_from_file_duplicate_error() -> anyhow::Result<()> {
     let client = Historical::new(&base_url);
 
     let filename = "midas_client_test_mbp-1.bin";
-    let path = PathBuf::from("../midas-server/data/processed_data").join(filename);
+    let path = PathBuf::from("../../midas-server/data/processed_data").join(filename);
 
     let ticker = "AAPL";
     let dataset = Dataset::Equities;
