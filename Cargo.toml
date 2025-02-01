@@ -6,7 +6,7 @@ edition = "2021"
 [dependencies]
 reqwest = {version ="0.12.5", features = ["json", "stream"]}
 serde = {version="1.0.204", features = ["derive"]}
-serde_json = "1.0"
+serde_json= "1.0.137"
 thiserror ={version = "1.0.63"}
 futures-util = "0.3"  
 chrono = { version = "0.4", features = ["serde"] }

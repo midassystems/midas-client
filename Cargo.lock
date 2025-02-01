@@ -901,8 +901,8 @@ checksum = "a7a70ba024b9dc04c27ea2f0c0548feb474ec5c54bba33a7f72f873a39d07b24"
 
 [[package]]
 name = "mbn"
-version = "1.0.7"
-source = "git+https://github.com/midassystems/mbn.git?branch=main#59c63225e3e0794935b99974dc0112ffeadbbc69"
+version = "1.0.15"
+source = "git+https://github.com/midassystems/mbn.git?branch=main#6e5dead22e33359ef59f12c678a8f29d8f2df7df"
 dependencies = [
  "bytemuck",
  "chrono",
@@ -910,6 +910,7 @@ dependencies = [
  "futures",
  "num_enum",
  "serde",
+ "serde_json",
  "sqlx",
  "thiserror",
  "time",
@@ -1521,11 +1522,12 @@ dependencies = [
 
 [[package]]
 name = "serde_json"
-version = "1.0.120"
+version = "1.0.138"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "4e0d21c9a8cae1235ad58a00c11cb40d4b1e5c784f1ef2c537876ed6ffd8b7c5"
+checksum = "d434192e7da787e94a6ea7e9670b26a036d0ca41e0b7efb2676dd32bae872949"
 dependencies = [
  "itoa",
+ "memchr",
  "ryu",
  "serde",
 ]
