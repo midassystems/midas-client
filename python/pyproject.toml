@@ -1,0 +1,56 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "midas_client"  
+version = "1.0.12" 
+description = "A Python client library to access the midas_server backend."  
+readme = "README.md"  
+keywords = ["midas", "client", "backend", "API"]  
+license = { text = "Apache-2.0" }
+authors = [
+    { name = "Anthony Baxter", email = "anthonybaxter819@gmail.com" }
+]
+requires-python = ">=3.10"  
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "License :: OSI Approved :: Apache Software License",
+    "Operating System :: OS Independent"
+]
+
+
+dependencies = [
+    "certifi==2024.7.4",
+    "charset-normalizer==3.3.2",
+    "docutils==0.21.2",
+    "idna==3.7",
+    "jaraco.classes==3.4.0",
+    "jaraco.context==6.0.1",
+    "jaraco.functools==4.1.0",
+    "keyring==25.6.0",
+    "markdown-it-py==3.0.0",
+    "mbn==1.0.15",
+    "mdurl==0.1.2",
+    "more-itertools==10.5.0",
+    "nh3==0.2.20",
+    "numpy==1.26.4",
+    "packaging==24.1",
+    "pandas==2.2.2",
+    "pkginfo==1.12.0",
+    "Pygments==2.19.1",
+    "pyproject_hooks==1.2.0",
+    "python-dateutil==2.9.0.post0",
+    "python-dotenv==1.0.1",
+    "pytz==2024.1",
+    "readme_renderer==44.0",
+    "requests==2.32.3",
+    "requests-toolbelt==1.0.0",
+    "rfc3986==2.0.0",
+    "rich==13.9.4",
+    "six==1.16.0",
+    "tzdata==2024.1",
+    "urllib3==2.2.2"
+]

@@ -1,4 +1,10 @@
-/rust/target
 .env
-.DS_Store
+/venv
+__pycache__
+/build
+*.egg-info
 *.bin
+.DS_Store
+dist/
+.secrets
+rust/target
