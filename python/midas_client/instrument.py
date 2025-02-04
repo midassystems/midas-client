@@ -1,6 +1,6 @@
 import requests
 from .utils import load_url
-from mbn import Dataset, Vendors
+from mbinary import Dataset, Vendors
 
 
 class InstrumentClient:

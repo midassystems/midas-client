@@ -1,6 +1,6 @@
 import os
 import unittest
-from mbn import Dataset, Vendors
+from mbinary import Dataset, Vendors
 import requests
 from dotenv import load_dotenv
 from midas_client import DatabaseClient

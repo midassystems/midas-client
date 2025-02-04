@@ -1,7 +1,7 @@
 use crate::response::ApiResponse;
 use crate::{error::Error, error::Result};
 use futures_util::StreamExt;
-use mbn::params::RetrieveParams;
+use mbinary::params::RetrieveParams;
 use reqwest::StatusCode;
 use reqwest::{self, Client, ClientBuilder};
 use std::fs::File;
@@ -186,15 +186,15 @@ mod tests {
     use crate::instrument::Instruments;
     use dbn;
     use dotenv::dotenv;
-    use mbn::decode::Decoder;
-    use mbn::encode::CombinedEncoder;
-    use mbn::enums::{Action, Dataset, Schema};
-    use mbn::metadata::Metadata;
-    use mbn::record_ref::RecordRef;
-    use mbn::records::{BidAskPair, Mbp1Msg, RecordHeader};
-    use mbn::symbols::{Instrument, SymbolMap};
-    use mbn::vendors::Vendors;
-    use mbn::vendors::{DatabentoData, VendorData};
+    use mbinary::decode::Decoder;
+    use mbinary::encode::CombinedEncoder;
+    use mbinary::enums::{Action, Dataset, Schema};
+    use mbinary::metadata::Metadata;
+    use mbinary::record_ref::RecordRef;
+    use mbinary::records::{BidAskPair, Mbp1Msg, RecordHeader};
+    use mbinary::symbols::{Instrument, SymbolMap};
+    use mbinary::vendors::Vendors;
+    use mbinary::vendors::{DatabentoData, VendorData};
     use serial_test::serial;
     use std::io::Cursor;
     use std::str::FromStr;
@@ -511,7 +511,7 @@ mod tests {
             end_ts: 1704239109644092565,
             schema: Schema::Mbp1,
             dataset,
-            stype: mbn::enums::Stype::Raw,
+            stype: mbinary::enums::Stype::Raw,
         };
 
         let response = client.get_records(&query_params).await?;
@@ -551,7 +551,7 @@ mod tests {
             end_ts: 1704239109644092565,
             schema: Schema::Mbp1,
             dataset,
-            stype: mbn::enums::Stype::Raw,
+            stype: mbinary::enums::Stype::Raw,
         };
 
         let response = client
@@ -587,7 +587,7 @@ mod tests {
             end_ts: 1704209203654092563,
             schema: Schema::Ohlcv1S, //to_string(),
             dataset,
-            stype: mbn::enums::Stype::Raw,
+            stype: mbinary::enums::Stype::Raw,
         };
 
         let response = client.get_records(&query_params).await?;
@@ -627,7 +627,7 @@ mod tests {
             end_ts: 1704209203654092563,
             schema: Schema::Trades,
             dataset,
-            stype: mbn::enums::Stype::Raw,
+            stype: mbinary::enums::Stype::Raw,
         };
 
         let response = client.get_records(&query_params).await?;
@@ -666,7 +666,7 @@ mod tests {
             end_ts: 1704209203654092563,
             schema: Schema::Tbbo,
             dataset,
-            stype: mbn::enums::Stype::Raw,
+            stype: mbinary::enums::Stype::Raw,
         };
 
         let response = client.get_records(&query_params).await?;
@@ -705,7 +705,7 @@ mod tests {
             end_ts: 1704209203654092563,
             schema: Schema::Bbo1S,
             dataset,
-            stype: mbn::enums::Stype::Raw,
+            stype: mbinary::enums::Stype::Raw,
         };
 
         let response = client.get_records(&query_params).await?;
@@ -742,7 +742,7 @@ mod tests {
             "2024-01-03 23:00:00",
             Schema::Bbo1M,
             Dataset::Equities,
-            mbn::enums::Stype::Continuous,
+            mbinary::enums::Stype::Continuous,
         )?;
 
         let _response = client.get_records_to_file(&query_params, "bbo.bin").await?;

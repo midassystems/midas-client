@@ -1,19 +1,19 @@
 use dotenv::dotenv;
-use mbn::encode::CombinedEncoder;
-use mbn::enums::Dataset;
-use mbn::enums::{Action, Schema};
-use mbn::metadata::Metadata;
-use mbn::record_ref::RecordRef;
-use mbn::records::{BidAskPair, Mbp1Msg, RecordHeader};
-use mbn::symbols::{Instrument, SymbolMap};
-use mbn::vendors::Vendors;
-use mbn::vendors::{DatabentoData, VendorData};
+use mbinary::encode::CombinedEncoder;
+use mbinary::enums::Dataset;
+use mbinary::enums::{Action, Schema};
+use mbinary::metadata::Metadata;
+use mbinary::record_ref::RecordRef;
+use mbinary::records::{BidAskPair, Mbp1Msg, RecordHeader};
+use mbinary::symbols::{Instrument, SymbolMap};
+use mbinary::vendors::Vendors;
+use mbinary::vendors::{DatabentoData, VendorData};
 use midas_client::historical::Historical;
 use midas_client::instrument::Instruments;
 use serial_test::serial;
 use std::path::PathBuf;
 use std::str::FromStr;
-// use mbn::params::RetrieveParams;
+// use mbinary::params::RetrieveParams;
 
 async fn create_dummy_instrument(ticker: &str, dataset: Dataset) -> anyhow::Result<i32> {
     dotenv().ok();

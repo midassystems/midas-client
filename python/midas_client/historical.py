@@ -1,6 +1,6 @@
 import requests
 from typing import List
-from mbn import BufferStore, RetrieveParams
+from mbinary import BufferStore, RetrieveParams
 from .utils import load_url
 import json
 

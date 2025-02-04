@@ -1,8 +1,8 @@
 use crate::response::ApiResponse;
 use crate::{error::Error, error::Result};
 use futures_util::StreamExt;
-use mbn::backtest_encode::BacktestEncoder;
-use mbn::{backtest::BacktestData, live::LiveData};
+use mbinary::backtest_encode::BacktestEncoder;
+use mbinary::{backtest::BacktestData, live::LiveData};
 use reqwest::StatusCode;
 use reqwest::{self, Client, ClientBuilder};
 use std::time::Duration;

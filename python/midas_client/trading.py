@@ -1,7 +1,7 @@
 import requests
 from typing import Dict
 from .utils import load_url
-from mbn import BacktestData, LiveData, PyBacktestEncoder
+from mbinary import BacktestData, LiveData, PyBacktestEncoder
 import json
 
 

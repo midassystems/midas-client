@@ -18,8 +18,8 @@ pub enum Error {
     InvalidDateFormat(String),
     #[error("Custom error: {0}")]
     CustomError(String),
-    #[error("Mbn error: {0}")]
-    MbnError(#[from] mbn::Error),
+    #[error("Mbinary error: {0}")]
+    MbinaryError(#[from] mbinary::Error),
 }
 
 pub type Result<T> = std::result::Result<T, Error>;

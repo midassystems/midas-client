@@ -1,9 +1,21 @@
 import os
-import mbn
 import json
 import unittest
 import requests
-from mbn import BufferStore, Action, Side
+from mbinary import (
+    BufferStore,
+    Action,
+    Dataset,
+    Mbp1Msg,
+    Metadata,
+    PyMetadataEncoder,
+    PyRecordEncoder,
+    Schema,
+    Side,
+    BidAskPair,
+    Stype,
+    SymbolMap,
+)
 from dotenv import load_dotenv
 from midas_client import DatabaseClient
 from midas_client.historical import RetrieveParams
@@ -53,7 +65,7 @@ def json_to_mbp1msg(data):
     """
     try:
         levels = [
-            mbn.BidAskPair(
+            BidAskPair(
                 bid_px=level["bid_px"],
                 ask_px=level["ask_px"],
                 bid_sz=level["bid_sz"],
@@ -64,7 +76,7 @@ def json_to_mbp1msg(data):
             for level in data.get("levels", [])
         ]
 
-        return mbn.Mbp1Msg(
+        return Mbp1Msg(
             instrument_id=data["instrument_id"],
             ts_event=data["ts_event"],
             rollover_flag=data["rollover_flag"],
@@ -91,16 +103,16 @@ def create_records(id: int, client: DatabaseClient) -> None:
 
     # Test
     bin = []
-    symbol_map = mbn.SymbolMap({})
-    metadata = mbn.Metadata(
-        mbn.Schema.MBP1,
-        mbn.Dataset.EQUITIES,
+    symbol_map = SymbolMap({})
+    metadata = Metadata(
+        Schema.MBP1,
+        Dataset.EQUITIES,
         1234567654321,
         987654345676543456,
         symbol_map,
     )
 
-    encoder = mbn.PyMetadataEncoder()
+    encoder = PyMetadataEncoder()
     encoder.encode_metadata(metadata)
     binary = encoder.get_encoded_data()
     bin.extend(binary)
@@ -111,7 +123,7 @@ def create_records(id: int, client: DatabaseClient) -> None:
         msg.instrument_id = id
         msgs.append(msg)
 
-    encoder = mbn.PyRecordEncoder()
+    encoder = PyRecordEncoder()
     encoder.encode_records(msgs)
     binary = encoder.get_encoded_data()
     bin.extend(binary)
@@ -137,9 +149,9 @@ class TestClientMethods(unittest.TestCase):
             ["AAPL"],
             "2023-11-01",
             "2024-11-30",
-            mbn.Schema.MBP1,
-            mbn.Dataset.EQUITIES,
-            mbn.Stype.RAW,
+            Schema.MBP1,
+            Dataset.EQUITIES,
+            Stype.RAW,
         )
 
         response = self.client.historical.get_records(params)
@@ -163,9 +175,9 @@ class TestClientMethods(unittest.TestCase):
             ["AAPL"],
             "2023-11-01",
             "2024-11-30",
-            mbn.Schema.MBP1,
-            mbn.Dataset.EQUITIES,
-            mbn.Stype.RAW,
+            Schema.MBP1,
+            Dataset.EQUITIES,
+            Stype.RAW,
         )
         response = self.client.historical.get_records(params)
         response.write_to_file(file_path)
@@ -192,9 +204,9 @@ class TestClientMethods(unittest.TestCase):
             ["AAPL"],
             "2023-11-01",
             "2024-11-30",
-            mbn.Schema.OHLCV1_D,
-            mbn.Dataset.EQUITIES,
-            mbn.Stype.RAW,
+            Schema.OHLCV1_D,
+            Dataset.EQUITIES,
+            Stype.RAW,
         )
         response = self.client.historical.get_records(params)
         response.write_to_file(file_path)
@@ -221,9 +233,9 @@ class TestClientMethods(unittest.TestCase):
             ["AAPL"],
             "2023-11-01",
             "2024-11-30",
-            mbn.Schema.TRADES,
-            mbn.Dataset.EQUITIES,
-            mbn.Stype.RAW,
+            Schema.TRADES,
+            Dataset.EQUITIES,
+            Stype.RAW,
         )
         response = self.client.historical.get_records(params)
         response.write_to_file(file_path)
@@ -250,9 +262,9 @@ class TestClientMethods(unittest.TestCase):
             ["AAPL"],
             "2023-11-01",
             "2024-11-30",
-            mbn.Schema.TBBO,
-            mbn.Dataset.EQUITIES,
-            mbn.Stype.RAW,
+            Schema.TBBO,
+            Dataset.EQUITIES,
+            Stype.RAW,
         )
         response = self.client.historical.get_records(params)
         response.write_to_file(file_path)
@@ -279,9 +291,9 @@ class TestClientMethods(unittest.TestCase):
             ["AAPL"],
             "2023-11-01",
             "2024-11-30",
-            mbn.Schema.BBO1_M,
-            mbn.Dataset.EQUITIES,
-            mbn.Stype.RAW,
+            Schema.BBO1_M,
+            Dataset.EQUITIES,
+            Stype.RAW,
         )
         response = self.client.historical.get_records(params)
         response.write_to_file(file_path)

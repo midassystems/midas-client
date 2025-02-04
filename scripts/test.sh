@@ -1,6 +1,13 @@
 #!/bin/bash
 # shellcheck disable=SC1091
 
+module="$1"
+
+if [ ! "$module" ]; then
+	echo "Argument not passed, please add argument {rust | python}"
+	exit 1
+fi
+
 python() {
 	# Ensure we are in the project root
 	cd "$(dirname "$0")/.." || exit
@@ -13,9 +20,12 @@ python() {
 		exit 1
 	fi
 
+	# Activate virtual environment
+	source venv/bin/activate
+
 	# Run Python tests inside the virtual environment directly
 	if cd python; then
-		"$PWD/../venv/bin/python" -m unittest discover
+		python3 -m unittest discover
 	fi
 
 }
@@ -34,20 +44,13 @@ options() {
 }
 
 # Main
-while true; do
-	options
-	read -r option
+case "$module" in
+python)
+	python
+	;;
+rust)
+	rust
+	;;
+*) echo "Invalid argument, valid arguments {rust|python}" ;;
 
-	case $option in
-	1)
-		rust
-		break
-		;;
-	2)
-		python
-		break
-		;;
-
-	*) echo "Please choose a different one." ;;
-	esac
-done
+esac

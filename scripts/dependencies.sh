@@ -1,6 +1,6 @@
 #!/bin/bash
 
-PYPROJECT="pyproject.toml"
+PYPROJECT="python/pyproject.toml"
 TMPFILE="tmpfile.toml"
 
 # Process the file: remove only the dependencies section under [project]

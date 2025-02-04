@@ -1,8 +1,8 @@
 use crate::error::Result;
 use crate::response::ApiResponse;
-use mbn::enums::Dataset;
-use mbn::symbols::Instrument;
-use mbn::vendors::Vendors;
+use mbinary::enums::Dataset;
+use mbinary::symbols::Instrument;
+use mbinary::vendors::Vendors;
 use reqwest::{self, Client, ClientBuilder};
 use reqwest::{Response, StatusCode};
 use std::time::Duration;
@@ -155,10 +155,10 @@ mod tests {
 
     use super::*;
     use dotenv::dotenv;
-    use mbn::enums::Dataset;
-    use mbn::symbols::Instrument;
-    use mbn::vendors::Vendors;
-    use mbn::vendors::{DatabentoData, VendorData};
+    use mbinary::enums::Dataset;
+    use mbinary::symbols::Instrument;
+    use mbinary::vendors::Vendors;
+    use mbinary::vendors::{DatabentoData, VendorData};
     use serial_test::serial;
 
     async fn create_dummy_instrument(client: &Instruments) -> anyhow::Result<i32> {

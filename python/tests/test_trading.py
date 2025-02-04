@@ -4,7 +4,7 @@ import requests
 from dotenv import load_dotenv
 from midas_client import DatabaseClient
 import json
-import mbn
+import mbinary
 
 # Load url
 load_dotenv()
@@ -52,7 +52,7 @@ def create_backtest():
         data = json.load(f)
 
     # Parameters
-    parameters = mbn.Parameters(
+    parameters = mbinary.Parameters(
         strategy_name=data["parameters"]["strategy_name"],
         capital=data["parameters"]["capital"],
         schema=data["parameters"]["schema"],
@@ -63,7 +63,7 @@ def create_backtest():
     )
 
     # Static Stats
-    static_stats = mbn.StaticStats(
+    static_stats = mbinary.StaticStats(
         total_trades=data["static_stats"]["total_trades"],
         total_winning_trades=data["static_stats"]["total_winning_trades"],
         total_losing_trades=data["static_stats"]["total_losing_trades"],
@@ -100,7 +100,7 @@ def create_backtest():
 
     # Period TimeseriesStats
     period_timeseries_stats = [
-        mbn.TimeseriesStats(
+        mbinary.TimeseriesStats(
             timestamp=stat["timestamp"],
             equity_value=stat["equity_value"],
             percent_drawdown=stat["percent_drawdown"],
@@ -112,7 +112,7 @@ def create_backtest():
 
     # Daily TimeseriesStats
     daily_timeseries_stats = [
-        mbn.TimeseriesStats(
+        mbinary.TimeseriesStats(
             timestamp=stat["timestamp"],
             equity_value=stat["equity_value"],
             percent_drawdown=stat["percent_drawdown"],
@@ -124,7 +124,7 @@ def create_backtest():
 
     # Trades
     trades = [
-        mbn.Trades(
+        mbinary.Trades(
             trade_id=trade["trade_id"],
             leg_id=trade["leg_id"],
             timestamp=trade["timestamp"],
@@ -143,7 +143,7 @@ def create_backtest():
     signals = []
     for signal_data in data["signals"]:
         trade_instructions = [
-            mbn.SignalInstructions(
+            mbinary.SignalInstructions(
                 ticker=instr["ticker"],
                 order_type=instr["order_type"],
                 action=instr["action"],
@@ -158,21 +158,21 @@ def create_backtest():
         ]
 
         # Signal object with the list of SignalInstructions
-        signal = mbn.Signals(
+        signal = mbinary.Signals(
             timestamp=signal_data["timestamp"],
             trade_instructions=trade_instructions,
         )
         signals.append(signal)
 
     # Construct and return the BacktestData object
-    metadata = mbn.BacktestMetaData(
+    metadata = mbinary.BacktestMetaData(
         backtest_id=0,
         backtest_name=data["backtest_name"],
         parameters=parameters,
         static_stats=static_stats,
     )
 
-    return mbn.BacktestData(
+    return mbinary.BacktestData(
         metadata=metadata,
         period_timeseries_stats=period_timeseries_stats,
         daily_timeseries_stats=daily_timeseries_stats,
@@ -186,7 +186,7 @@ def create_live():
         data = json.load(f)
 
     # Parameters
-    parameters = mbn.Parameters(
+    parameters = mbinary.Parameters(
         strategy_name=data["parameters"]["strategy_name"],
         capital=data["parameters"]["capital"],
         schema=data["parameters"]["schema"],
@@ -197,7 +197,7 @@ def create_live():
     )
 
     # Account Summary
-    account = mbn.AccountSummary(
+    account = mbinary.AccountSummary(
         currency=data["account"]["currency"],
         start_buying_power=data["account"]["start_buying_power"],
         start_excess_liquidity=data["account"]["start_excess_liquidity"],
@@ -229,7 +229,7 @@ def create_live():
 
     # Trades
     trades = [
-        mbn.Trades(
+        mbinary.Trades(
             trade_id=trade["trade_id"],
             leg_id=trade["leg_id"],
             timestamp=trade["timestamp"],
@@ -248,7 +248,7 @@ def create_live():
     signals = []
     for signal_data in data["signals"]:
         trade_instructions = [
-            mbn.SignalInstructions(
+            mbinary.SignalInstructions(
                 ticker=instr["ticker"],
                 order_type=instr["order_type"],
                 action=instr["action"],
@@ -262,14 +262,14 @@ def create_live():
             for instr in signal_data["trade_instructions"]
         ]
 
-        signal = mbn.Signals(
+        signal = mbinary.Signals(
             timestamp=signal_data["timestamp"],
             trade_instructions=trade_instructions,
         )
         signals.append(signal)
 
     # Construct and return the BacktestData object
-    return mbn.LiveData(
+    return mbinary.LiveData(
         live_id=None,
         parameters=parameters,
         trades=trades,
