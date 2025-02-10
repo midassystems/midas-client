@@ -17,7 +17,7 @@ serde_json= "1.0.137"
 thiserror ={version = "1.0.63"}
 futures-util = "0.3"  
 chrono = { version = "0.4", features = ["serde"] }
-mbinary = {version = "1.0.21"}
+mbinary = {version = "1.0.22"}
 
 [dev-dependencies]
 dotenv = "0.15"
