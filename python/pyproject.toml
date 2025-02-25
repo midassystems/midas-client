@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "midas_client"  
-version = "1.0.20" 
+version = "1.0.21" 
 description = "A Python client library to access the midas_server backend."  
 readme = "README.md"  
 keywords = ["midas", "client", "backend", "API"]  
