@@ -4,7 +4,15 @@ PYPROJECT="python/pyproject.toml"
 TMPFILE="tmpfile.toml"
 
 # Process the file: remove only the dependencies section under [project]
-gsed '/\[project\]/,/^\[/{/dependencies = \[/,/]/d}' "$PYPROJECT" >"$TMPFILE"
+if [[ "$(uname)" == "Darwin" ]]; then
+	# macOS
+	SED_COMMAND="gsed"
+else
+	# Linux (or other Unix-like systems)
+	SED_COMMAND="sed"
+fi
+
+$SED_COMMAND '/\[project\]/,/^\[/{/dependencies = \[/,/]/d}' "$PYPROJECT" >"$TMPFILE"
 
 # Fetch dependencies from pip freeze, excluding build-related tools
 DEPENDENCIES=$(pip freeze | grep -Ev '^(setuptools|wheel|twine|build|bump2version)' | awk '{printf "    \"%s\",\n", $0}')

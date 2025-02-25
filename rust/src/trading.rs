@@ -101,8 +101,10 @@ impl Trading {
         encoder.encode_trades(&backtest.trades);
         encoder.encode_signals(&backtest.signals);
 
+        // Convert bytes into a stream for sending
         let url = self.url("backtest/create");
-        let response = self.client.post(&url).json(&bytes).send().await?;
+        let body = reqwest::Body::from(bytes);
+        let response = self.client.post(&url).body(body).send().await?;
 
         // Check for HTTP status
         if response.status() != StatusCode::OK {

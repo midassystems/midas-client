@@ -23,16 +23,21 @@ classifiers = [
 
 
 dependencies = [
+    "backports.tarfile==1.2.0",
     "certifi==2024.7.4",
+    "cffi==1.17.1",
     "charset-normalizer==3.3.2",
+    "cryptography==44.0.1",
     "docutils==0.21.2",
     "idna==3.7",
+    "importlib_metadata==8.6.1",
     "jaraco.classes==3.4.0",
     "jaraco.context==6.0.1",
     "jaraco.functools==4.1.0",
+    "jeepney==0.8.0",
     "keyring==25.6.0",
     "markdown-it-py==3.0.0",
-    "mbinary==1.0.22",
+    "mbinary==1.0.24",
     "mdurl==0.1.2",
     "more-itertools==10.5.0",
     "nh3==0.2.20",
@@ -40,6 +45,7 @@ dependencies = [
     "packaging==24.1",
     "pandas==2.2.2",
     "pkginfo==1.12.0",
+    "pycparser==2.22",
     "Pygments==2.19.1",
     "pyproject_hooks==1.2.0",
     "python-dateutil==2.9.0.post0",
@@ -50,7 +56,9 @@ dependencies = [
     "requests-toolbelt==1.0.0",
     "rfc3986==2.0.0",
     "rich==13.9.4",
+    "SecretStorage==3.3.3",
     "six==1.16.0",
     "tzdata==2024.1",
-    "urllib3==2.3.0"
+    "urllib3==2.3.0",
+    "zipp==3.21.0"
 ]

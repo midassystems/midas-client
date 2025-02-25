@@ -8,6 +8,11 @@ if [ ! "$module" ]; then
 	exit 1
 fi
 
+# Server path(locally)
+export HISTORICAL_URL=http://127.0.0.1:8080
+export TRADING_URL=http://127.0.0.1:8081
+export INSTRUMENT_URL=http://127.0.0.1:8082
+
 python() {
 	# Ensure we are in the project root
 	cd "$(dirname "$0")/.." || exit

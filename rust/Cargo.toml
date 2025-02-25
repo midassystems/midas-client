@@ -14,10 +14,13 @@ edition = "2021"
 reqwest = {version ="0.12.5", features = ["json", "stream"]}
 serde = {version="1.0.204", features = ["derive"]}
 serde_json= "1.0.137"
-thiserror ={version = "1.0.63"}
+thiserror ={version = "2.0.11"}
 futures-util = "0.3"  
 chrono = { version = "0.4", features = ["serde"] }
-mbinary = {version = "1.0.22"}
+futures ="0.3.31"
+tokio-util="0.7.13"
+tokio-stream="0.1.17"
+mbinary = {version = "1.0.24"}
 
 [dev-dependencies]
 dotenv = "0.15"
@@ -25,8 +28,8 @@ tokio = { version = "1.0", features = ["macros", "rt-multi-thread", "time"] }
 anyhow ="1.0.86"
 serial_test = "3.1.1"
 regex = "1.3.9"
-dbn = "0.22.1"
-databento ="0.14.1"
+dbn = "0.28.0"
+databento ="0.20.0"
 
 [lib]
 crate-type = ["rlib"]
