@@ -20,7 +20,7 @@ chrono = { version = "0.4", features = ["serde"] }
 futures ="0.3.31"
 tokio-util="0.7.13"
 tokio-stream="0.1.17"
-mbinary = {version = "1.0.24"}
+mbinary = {version = "1.0.25"}
 
 [dev-dependencies]
 dotenv = "0.15"

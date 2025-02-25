@@ -126,7 +126,7 @@ def create_backtest():
     trades = [
         mbinary.Trades(
             trade_id=trade["trade_id"],
-            leg_id=trade["leg_id"],
+            signal_id=trade["signal_id"],
             timestamp=trade["timestamp"],
             ticker=trade["ticker"],
             quantity=trade["quantity"],
@@ -147,8 +147,7 @@ def create_backtest():
                 ticker=instr["ticker"],
                 order_type=instr["order_type"],
                 action=instr["action"],
-                trade_id=instr["trade_id"],
-                leg_id=instr["leg_id"],
+                signal_id=instr["signal_id"],
                 weight=instr["weight"],
                 quantity=instr["quantity"],
                 limit_price=instr.get("limit_price", ""),
@@ -231,7 +230,7 @@ def create_live():
     trades = [
         mbinary.Trades(
             trade_id=trade["trade_id"],
-            leg_id=trade["leg_id"],
+            signal_id=trade["signal_id"],
             timestamp=trade["timestamp"],
             ticker=trade["ticker"],
             quantity=trade["quantity"],
@@ -252,8 +251,7 @@ def create_live():
                 ticker=instr["ticker"],
                 order_type=instr["order_type"],
                 action=instr["action"],
-                trade_id=instr["trade_id"],
-                leg_id=instr["leg_id"],
+                signal_id=instr["signal_id"],
                 weight=instr["weight"],
                 quantity=instr["quantity"],
                 limit_price=instr.get("limit_price", ""),

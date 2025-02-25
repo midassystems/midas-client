@@ -81,7 +81,7 @@
   "trades": [
     {
       "trade_id": 1,
-      "leg_id": 1,
+      "signal_id": 1,
       "timestamp": 1704903000,
       "ticker": "AAPL",
       "quantity": 4,
@@ -100,8 +100,7 @@
           "ticker": "AAPL",
           "order_type": "MKT",
           "action": "BUY",
-          "trade_id": 1,
-          "leg_id": 1,
+          "signal_id": 1,
           "weight": 50,
           "quantity": 2343,
           "limit_price": "",
@@ -111,8 +110,7 @@
           "ticker": "MSFT",
           "order_type": "LMT",
           "action": "SELL",
-          "trade_id": 1,
-          "leg_id": 2,
+          "signal_id": 1,
           "weight": 5,
           "quantity": 2343,
           "limit_price": "-1",
