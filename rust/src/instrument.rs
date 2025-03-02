@@ -196,7 +196,7 @@ mod tests {
     // #[ignore]
     async fn test_instrument_create() -> anyhow::Result<()> {
         dotenv().ok();
-        let base_url = std::env::var("INSTRUMENT_URL").expect("Expected database_url.");
+        let base_url = std::env::var("MIDAS_URL").expect("Expected database_url.");
         let client = Instruments::new(&base_url);
 
         let schema = dbn::Schema::from_str("mbp-1")?;
@@ -240,7 +240,7 @@ mod tests {
     // #[ignore]
     async fn test_instrument_create_error() -> anyhow::Result<()> {
         dotenv().ok();
-        let base_url = std::env::var("INSTRUMENT_URL").expect("Expected database_url.");
+        let base_url = std::env::var("MIDAS_URL").expect("Expected database_url.");
         let client = Instruments::new(&base_url);
         let id = create_dummy_instrument(&client).await?;
 
@@ -284,7 +284,7 @@ mod tests {
     // #[ignore]
     async fn test_get_instrument() -> anyhow::Result<()> {
         dotenv().ok();
-        let base_url = std::env::var("INSTRUMENT_URL").expect("Expected database_url.");
+        let base_url = std::env::var("MIDAS_URL").expect("Expected database_url.");
         let client = Instruments::new(&base_url);
         let id = create_dummy_instrument(&client).await?;
 
@@ -311,7 +311,7 @@ mod tests {
     // #[ignore]
     async fn test_get_instrument_none() -> anyhow::Result<()> {
         dotenv().ok();
-        let base_url = std::env::var("INSTRUMENT_URL").expect("Expected database_url.");
+        let base_url = std::env::var("MIDAS_URL").expect("Expected database_url.");
         let client = Instruments::new(&base_url);
 
         // Test
@@ -331,7 +331,7 @@ mod tests {
     // #[ignore]
     async fn test_update_instrument() -> anyhow::Result<()> {
         dotenv().ok();
-        let base_url = std::env::var("INSTRUMENT_URL").expect("Expected database_url.");
+        let base_url = std::env::var("MIDAS_URL").expect("Expected database_url.");
         let client = Instruments::new(&base_url);
         let id = create_dummy_instrument(&client).await?;
 
@@ -375,7 +375,7 @@ mod tests {
     // #[ignore]
     async fn test_list_dataset_instruments() -> anyhow::Result<()> {
         dotenv().ok();
-        let base_url = std::env::var("INSTRUMENT_URL").expect("Expected database_url.");
+        let base_url = std::env::var("MIDAS_URL").expect("Expected database_url.");
         let client = Instruments::new(&base_url);
         let id = create_dummy_instrument(&client).await?;
 
@@ -398,7 +398,7 @@ mod tests {
     // #[ignore]
     async fn test_list_vendor_instruments() -> anyhow::Result<()> {
         dotenv().ok();
-        let base_url = std::env::var("INSTRUMENT_URL").expect("Expected database_url.");
+        let base_url = std::env::var("MIDAS_URL").expect("Expected database_url.");
         let client = Instruments::new(&base_url);
         let id = create_dummy_instrument(&client).await?;
 

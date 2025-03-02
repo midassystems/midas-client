@@ -17,7 +17,7 @@ use std::str::FromStr;
 
 async fn create_dummy_instrument(ticker: &str, dataset: Dataset) -> anyhow::Result<i32> {
     dotenv().ok();
-    let base_url = std::env::var("INSTRUMENT_URL").expect("Expected database_url.");
+    let base_url = std::env::var("MIDAS_URL").expect("Expected database_url.");
     let client = Instruments::new(&base_url);
 
     // Create instrument
@@ -51,7 +51,7 @@ async fn create_dummy_instrument(ticker: &str, dataset: Dataset) -> anyhow::Resu
 
 async fn delete_dummy_instrument(id: &i32) -> anyhow::Result<()> {
     dotenv().ok();
-    let base_url = std::env::var("INSTRUMENT_URL").expect("Expected database_url.");
+    let base_url = std::env::var("MIDAS_URL").expect("Expected database_url.");
     let client = Instruments::new(&base_url);
     let _ = client.delete_symbol(&id).await?;
 
@@ -139,7 +139,7 @@ async fn create_dummy_records_file(
 // #[ignore]
 async fn test_create_mbp_from_file() -> anyhow::Result<()> {
     dotenv().ok();
-    let base_url = std::env::var("HISTORICAL_URL").expect("Expected database_url.");
+    let base_url = std::env::var("MIDAS_URL").expect("Expected database_url.");
     let client = Historical::new(&base_url);
 
     let filename = "midas_client_test_mbp-1.bin";
@@ -166,7 +166,7 @@ async fn test_create_mbp_from_file() -> anyhow::Result<()> {
 #[serial]
 async fn test_create_mbp_from_file_duplicate_error() -> anyhow::Result<()> {
     dotenv().ok();
-    let base_url = std::env::var("HISTORICAL_URL").expect("Expected database_url.");
+    let base_url = std::env::var("MIDAS_URL").expect("Expected database_url.");
     let client = Historical::new(&base_url);
 
     let filename = "midas_client_test_mbp-1.bin";

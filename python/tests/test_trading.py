@@ -9,15 +9,15 @@ import mbinary
 # Load url
 load_dotenv()
 
-DATABASE_URL = os.getenv("HISTORICAL_URL")
+MIDAS_URL = os.getenv("MIDAS_URL")
 
-if DATABASE_URL is None:
-    raise ValueError("HISTORICAL_URL environment variable is not set")
+if MIDAS_URL is None:
+    raise ValueError("MIDAS_URL environment variable is not set")
 
 
 # Helper methods
 def create_instruments(ticker: str, name: str) -> int:
-    url = f"{DATABASE_URL}/historical/instruments/create"
+    url = f"{MIDAS_URL}/historical/instruments/create"
     data = {
         "ticker": ticker,
         "name": name,
@@ -36,13 +36,13 @@ def create_instruments(ticker: str, name: str) -> int:
 
 
 def delete_instruments(id: int) -> None:
-    url = f"{DATABASE_URL}/historical/instruments/delete"
+    url = f"{MIDAS_URL}/historical/instruments/delete"
 
     _ = requests.delete(url, json=id).json()
 
 
 def create_records(binary_data: list):
-    url = f"{DATABASE_URL}/historical/mbp/create"
+    url = f"{MIDAS_URL}/historical/mbp/create"
 
     _ = requests.post(url, json=binary_data)
 
