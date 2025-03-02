@@ -8,7 +8,7 @@ import json
 class TradingClient:
     def __init__(self, api_url: str = ""):
         if not api_url:
-            api_url = load_url("TRADING_URL")
+            api_url = load_url("MIDAS_URL")
 
         self.api_url = f"{api_url}/trading"
         # self.api_key = api_key

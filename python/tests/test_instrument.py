@@ -8,15 +8,15 @@ from midas_client import DatabaseClient
 # Load url
 load_dotenv()
 
-DATABASE_URL = os.getenv("INSTRUMENT_URL")
+MIDAS_URL = os.getenv("MIDAS_URL")
 
-if DATABASE_URL is None:
-    raise ValueError("INSTRUMENT_URL environment variable is not set")
+if MIDAS_URL is None:
+    raise ValueError("MIDAS_URL environment variable is not set")
 
 
 # Helper methods
 def create_instruments(ticker: str, name: str) -> int:
-    url = f"{DATABASE_URL}/instruments/create"
+    url = f"{MIDAS_URL}/instruments/create"
     data = {
         "ticker": ticker,
         "name": name,
@@ -36,7 +36,7 @@ def create_instruments(ticker: str, name: str) -> int:
 
 
 def delete_instruments(id: int) -> None:
-    url = f"{DATABASE_URL}/instruments/delete"
+    url = f"{MIDAS_URL}/instruments/delete"
 
     _ = requests.delete(url, json=id)
 

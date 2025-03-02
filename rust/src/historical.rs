@@ -201,7 +201,7 @@ mod tests {
 
     async fn create_dummy_instrument(ticker: &str, dataset: Dataset) -> anyhow::Result<i32> {
         dotenv().ok();
-        let base_url = std::env::var("INSTRUMENT_URL").expect("Expected database_url.");
+        let base_url = std::env::var("MIDAS_URL").expect("Expected database_url.");
         let client = Instruments::new(&base_url);
 
         let schema = dbn::Schema::from_str("mbp-1")?;
@@ -235,7 +235,7 @@ mod tests {
 
     async fn delete_dummy_instrument(id: &i32) -> Result<()> {
         dotenv().ok();
-        let base_url = std::env::var("INSTRUMENT_URL").expect("Expected database_url.");
+        let base_url = std::env::var("MIDAS_URL").expect("Expected database_url.");
         let client = Instruments::new(&base_url);
         let _ = client.delete_symbol(&id).await?;
 
@@ -245,7 +245,7 @@ mod tests {
     #[allow(dead_code)]
     async fn create_dummy_records(ticker: &str, dataset: Dataset) -> anyhow::Result<i32> {
         dotenv().ok();
-        let base_url = std::env::var("HISTORICAL_URL").expect("Expected database_url.");
+        let base_url = std::env::var("MIDAS_URL").expect("Expected database_url.");
         let client = Historical::new(&base_url);
 
         let id = create_dummy_instrument(ticker, dataset).await?;
@@ -321,7 +321,7 @@ mod tests {
     // #[ignore]
     async fn test_create_mbp() -> anyhow::Result<()> {
         dotenv().ok();
-        let base_url = std::env::var("HISTORICAL_URL").expect("Expected database_url.");
+        let base_url = std::env::var("MIDAS_URL").expect("Expected database_url.");
         let client = Historical::new(&base_url);
 
         let ticker = "AAPL";
@@ -408,7 +408,7 @@ mod tests {
     // #[ignore]
     async fn test_create_mbp_duplicate_error() -> anyhow::Result<()> {
         dotenv().ok();
-        let base_url = std::env::var("HISTORICAL_URL").expect("Expected database_url.");
+        let base_url = std::env::var("MIDAS_URL").expect("Expected database_url.");
         let client = Historical::new(&base_url);
 
         let ticker = "AAPL";
@@ -496,7 +496,7 @@ mod tests {
     // #[ignore]
     async fn test_get_mbp() -> anyhow::Result<()> {
         dotenv().ok();
-        let base_url = std::env::var("HISTORICAL_URL").expect("Expected database_url.");
+        let base_url = std::env::var("MIDAS_URL").expect("Expected database_url.");
         let client = Historical::new(&base_url);
 
         let ticker = "AAPL";
@@ -536,7 +536,7 @@ mod tests {
     // #[ignore]
     async fn test_get_records_to_file() -> anyhow::Result<()> {
         dotenv().ok();
-        let base_url = std::env::var("HISTORICAL_URL").expect("Expected database_url.");
+        let base_url = std::env::var("MIDAS_URL").expect("Expected database_url.");
         let client = Historical::new(&base_url);
 
         let ticker = "AAPL";
@@ -572,7 +572,7 @@ mod tests {
     // #[ignore]
     async fn test_get_ohlcv() -> anyhow::Result<()> {
         dotenv().ok();
-        let base_url = std::env::var("HISTORICAL_URL").expect("Expected database_url.");
+        let base_url = std::env::var("MIDAS_URL").expect("Expected database_url.");
         let client = Historical::new(&base_url);
 
         let ticker = "AAPL";
@@ -612,7 +612,7 @@ mod tests {
     // #[ignore]
     async fn test_get_trades() -> anyhow::Result<()> {
         dotenv().ok();
-        let base_url = std::env::var("HISTORICAL_URL").expect("Expected database_url.");
+        let base_url = std::env::var("MIDAS_URL").expect("Expected database_url.");
         let client = Historical::new(&base_url);
 
         let ticker = "AAPL";
@@ -651,7 +651,7 @@ mod tests {
     // #[ignore]
     async fn test_get_tbbo() -> anyhow::Result<()> {
         dotenv().ok();
-        let base_url = std::env::var("HISTORICAL_URL").expect("Expected database_url.");
+        let base_url = std::env::var("MIDAS_URL").expect("Expected database_url.");
         let client = Historical::new(&base_url);
 
         let ticker = "AAPL";
@@ -690,7 +690,7 @@ mod tests {
     // #[ignore]
     async fn test_get_bbo() -> anyhow::Result<()> {
         dotenv().ok();
-        let base_url = std::env::var("HISTORICAL_URL").expect("Expected database_url.");
+        let base_url = std::env::var("MIDAS_URL").expect("Expected database_url.");
         let client = Historical::new(&base_url);
 
         let ticker = "AAPL";
@@ -732,7 +732,7 @@ mod tests {
     async fn test_get_records_to_file_server() -> Result<()> {
         dotenv().ok();
 
-        let base_url = std::env::var("HISTORICAL_URL").expect("Expected database_url.");
+        let base_url = std::env::var("MIDAS_URL").expect("Expected database_url.");
         let client = Historical::new(&base_url);
 
         // Test

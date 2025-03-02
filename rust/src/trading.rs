@@ -225,7 +225,7 @@ mod tests {
     // #[ignore]
     async fn test_create_backtest() -> Result<()> {
         dotenv().ok();
-        let base_url = std::env::var("TRADING_URL").expect("Expected database_url.");
+        let base_url = std::env::var("MIDAS_URL").expect("Expected database_url.");
         let client = Trading::new(&base_url);
 
         // Pull test data
@@ -253,7 +253,7 @@ mod tests {
     // #[ignore]
     async fn test_list_backtest() -> Result<()> {
         dotenv().ok();
-        let base_url = std::env::var("TRADING_URL").expect("Expected database_url.");
+        let base_url = std::env::var("MIDAS_URL").expect("Expected database_url.");
         let client = Trading::new(&base_url);
 
         // Pull test data
@@ -283,7 +283,7 @@ mod tests {
     // #[ignore]
     async fn test_get_backtest() -> Result<()> {
         dotenv().ok();
-        let base_url = std::env::var("TRADING_URL").expect("Expected database_url.");
+        let base_url = std::env::var("MIDAS_URL").expect("Expected database_url.");
         let client = Trading::new(&base_url);
 
         // Pull test data
@@ -313,7 +313,7 @@ mod tests {
     // #[ignore]
     async fn test_create_live() -> Result<()> {
         dotenv().ok();
-        let base_url = std::env::var("TRADING_URL").expect("Expected database_url.");
+        let base_url = std::env::var("MIDAS_URL").expect("Expected database_url.");
         let client = Trading::new(&base_url);
 
         // Pull test data
@@ -341,7 +341,7 @@ mod tests {
     // #[ignore]
     async fn test_list_live() -> Result<()> {
         dotenv().ok();
-        let base_url = std::env::var("TRADING_URL").expect("Expected database_url.");
+        let base_url = std::env::var("MIDAS_URL").expect("Expected database_url.");
         let client = Trading::new(&base_url);
 
         // Pull test data
@@ -371,7 +371,7 @@ mod tests {
     // #[ignore]
     async fn test_get_live() -> Result<()> {
         dotenv().ok();
-        let base_url = std::env::var("TRADING_URL").expect("Expected database_url.");
+        let base_url = std::env::var("MIDAS_URL").expect("Expected database_url.");
         let client = Trading::new(&base_url);
 
         // Pull test data
