@@ -40,6 +40,7 @@ async fn create_dummy_instrument(ticker: &str, dataset: Dataset) -> anyhow::Resu
         1,
         1,
         1,
+        false,
         true,
     );
 

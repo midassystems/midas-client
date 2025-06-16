@@ -41,6 +41,7 @@ def create_instruments(ticker: str, name: str) -> int:
         "last_available": 234565432,
         "first_available": 234546762,
         "expiration_date": 234565432,
+        "is_continuous": False,
         "active": True,
     }
 

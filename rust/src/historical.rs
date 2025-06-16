@@ -224,6 +224,7 @@ mod tests {
             1,
             1,
             1,
+            false,
             true,
         );
 
@@ -726,6 +727,7 @@ mod tests {
     }
 
     /// Used to test pull files from server
+    // Should be ignored at all times unless reason to not be
     #[tokio::test]
     #[serial]
     #[ignore]
