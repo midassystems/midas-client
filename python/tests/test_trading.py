@@ -26,6 +26,7 @@ def create_instruments(ticker: str, name: str) -> int:
         "dataset": "test",
         "last_available": 1,
         "first_available": 0,
+        "is_continous": False,
         "active": True,
     }
 
